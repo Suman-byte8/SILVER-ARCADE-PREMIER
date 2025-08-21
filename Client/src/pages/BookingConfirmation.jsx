@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { fetchAccommodationDetails } from "../services/bookingService";
+import { fetchAccommodationDetails } from '../components/Reservation/api/accommodationApi';
 import { getBookingType, formatDate } from "../utils/bookingUtils";
 import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone } from "react-icons/fa";
 
