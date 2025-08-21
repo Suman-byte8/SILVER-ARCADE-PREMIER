@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const roomSchema = new mongoose.Schema({
+  typeOfReservation: {
+    type: String,
+    required: true,
+    value: 'accommodation'
+  },
   adults: {
     type: Number,
     required: true,
@@ -25,15 +30,15 @@ const accommodationSchema = new mongoose.Schema({
     required: true
   },
   rooms: [roomSchema],
-//   specialCode: {
-//     type: String,
-//     default: ''
-//   },
+  //   specialCode: {
+  //     type: String,
+  //     default: ''
+  //   },
 
-//   purposeOfTravel: {
-//     type: String,
-//     default: null
-//   },
+  //   purposeOfTravel: {
+  //     type: String,
+  //     default: null
+  //   },
 
   totalAdults: {
     type: Number,
@@ -60,11 +65,11 @@ const accommodationSchema = new mongoose.Schema({
       match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email address']
     }
   },
-//   status: {
-//     type: String,
-//     enum: ['pending', 'confirmed', 'cancelled'],
-//     default: 'pending'
-//   }
+  //   status: {
+  //     type: String,
+  //     enum: ['pending', 'confirmed', 'cancelled'],
+  //     default: 'pending'
+  //   }
 }, {
   timestamps: true
 });

@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import {
-  FaBuilding,
-  FaUtensils,
-  FaUser,
-  FaInfoCircle,
-  FaCalendarAlt,
-  FaClock,
-  FaPhone,
-  FaEnvelope,
-} from "react-icons/fa";
-import Calendar from "./Calender";
+import { toast } from "react-hot-toast";
 import FullLogo from "../FullLogo";
 import BookingButton from "./BookingButton";
+import { DinerCount } from "./RestaurantReservation/components/DinerCount";
+import { DateSelection } from "./RestaurantReservation/components/DateSelection";
+import { TimeSlotSelection } from "./RestaurantReservation/components/TimeSlotSelection";
+import { SpecialRequests } from "./RestaurantReservation/components/SpecialRequests";
+import { AdditionalDetails } from "./RestaurantReservation/components/AdditionalDetails";
+import { GuestInformation } from "./RestaurantReservation/components/GuestInformation";
+import { TermsAndConditions } from "./RestaurantReservation/components/TermsAndConditions";
+import { createRestaurantReservation } from "./api/restaurantReservationApi";
 
 export default function RestaurantReservationForm({ onSubmit }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -25,246 +23,125 @@ export default function RestaurantReservationForm({ onSubmit }) {
   const [guestEmail, setGuestEmail] = useState("");
   const [agreeToTnC, setAgreeToTnC] = useState(false);
 
-  const handleSubmit = () => {
-    const formData = {
-      selectedDate: selectedDate.toISOString(),
-      numberOfDiners,
-      timeSlot,
-      specialRequests,
-      additionalDetails,
-      guestName,
-      guestPhoneNumber,
-      guestEmail,
-      agreeToTnC,
-    };
-    onSubmit(formData);
+  const validateForm = () => {
+    if (!guestName || !guestPhoneNumber || !guestEmail || !agreeToTnC) {
+      toast.error("Please fill in all required fields and agree to the terms.");
+      return false;
+    }
+    return true;
+  };
+
+  const resetForm = () => {
+    setNumberOfDiners(1);
+    setTimeSlot("");
+    setSpecialRequests("");
+    setAdditionalDetails("");
+    setGuestName("");
+    setGuestPhoneNumber("");
+    setGuestEmail("");
+    setAgreeToTnC(false);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!validateForm()) {
+        return;
+      }
+
+      const formData = {
+        noOfDiners: numberOfDiners,
+        date: selectedDate.toISOString(),
+        timeSlot,
+        specialRequests,
+        additionalDetails,
+        guestInfo: {
+          name: guestName,
+          phoneNumber: guestPhoneNumber,
+          email: guestEmail,
+        },
+        agreeToTnC,
+      };
+
+      const token = import.meta.env.VITE_TEMP_TOKEN;
+      const { data, error } = await createRestaurantReservation(formData, token);
+
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      toast.success("Reservation created successfully!");
+      onSubmit(data);
+      resetForm();
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
+    }
   };
 
   return (
     <div className="flex-1 p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FullLogo text={"xs"} />
+      <FullLogo text={"xs"} />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            NO OF DINERS
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-3">
-            <FaBuilding className="text-gray-500 mr-2" />
-            <input
-              type="number"
-              placeholder="Enter no of diners"
-              className="flex-1 outline-none bg-transparent"
-              min={1}
-              value={numberOfDiners}
-              onChange={(e) => setNumberOfDiners(parseInt(e.target.value) || 1)}
-            />
-          </div>
-        </div>
-
-        <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            DATE
-          </label>
-          <div
-            className="flex items-center border border-gray-300 rounded-lg px-3 py-3 cursor-pointer"
-            onClick={() => setShowCalendar(!showCalendar)}
-          >
-            <FaCalendarAlt className="text-gray-500 mr-2" />
-            <span className="flex-1 outline-none bg-transparent">
-              {selectedDate.toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </span>
-            <svg
-              className="w-4 h-4 ml-auto text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </div>
-          {showCalendar && (
-            <Calendar
-              selectedDate={selectedDate}
-              onDateSelect={(date) => {
-                setSelectedDate(date);
-                setShowCalendar(false);
-              }}
-              minDate={new Date()}
-            />
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            TIME SLOT
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-3">
-            <FaClock className="text-gray-500 mr-2" />
-            <select
-              className="flex-1 outline-none bg-transparent text-gray-700"
-              value={timeSlot}
-              onChange={(e) => setTimeSlot(e.target.value)}
-            >
-              <option value="">Select Meal Period</option>
-              <option value="breakfast">Breakfast</option>
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
-            </select>
-            <svg
-              className="w-4 h-4 ml-auto text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </div>
-          <p className="text-xs text-gray-500 mt-1">
-            (ALL OUTLETS MAY NOT BE OPERATIONAL ACROSS ALL TIME SLOTS)
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            SPECIAL REQUESTS
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-3">
-            <FaUtensils className="text-gray-500 mr-2" />
-            <input
-              type="text"
-              placeholder="Special Requests"
-              className="flex-1 outline-none bg-transparent"
-              value={specialRequests}
-              onChange={(e) => setSpecialRequests(e.target.value)}
-            />
-            <svg
-              className="w-4 h-4 ml-auto text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </div>
-        </div>
-
-        <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            PLEASE SHARE ADDITIONAL DETAILS
-          </label>
-          <div className="flex items-start border border-gray-300 rounded-lg px-3 py-3">
-            <svg
-              className="text-gray-500 mr-2 mt-1 w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            <textarea
-              placeholder="Please share additional details"
-              className="flex-1 outline-none resize-none bg-transparent"
-              rows={3}
-              value={additionalDetails}
-              onChange={(e) => setAdditionalDetails(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Guest Information */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Guest Name
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-3">
-            <FaUser className="text-gray-500 mr-2" />
-            <input
-              type="text"
-              placeholder="Enter guest name"
-              className="flex-1 outline-none bg-transparent"
-              value={guestName}
-              onChange={(e) => setGuestName(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Guest Phone Number
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-3">
-            <FaPhone className="text-gray-500 mr-2" />
-            <input
-              type="tel"
-              placeholder="Enter phone number"
-              className="flex-1 outline-none bg-transparent"
-              value={guestPhoneNumber}
-              onChange={(e) => setGuestPhoneNumber(e.target.value)}
-            />
-            <FaInfoCircle className="text-gray-400 ml-2" />
-          </div>
-        </div>
-
-        <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Guest Email
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-lg px-3 py-3">
-            <FaEnvelope className="text-gray-500 mr-2" />
-            <input
-              type="email"
-              placeholder="Enter email address"
-              className="flex-1 outline-none bg-transparent"
-              value={guestEmail}
-              onChange={(e) => setGuestEmail(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="col-span-1 md:col-span-2 flex items-start gap-2 mb-6">
-          <input
-            type="checkbox"
-            className="w-4 h-4 mt-1"
-            checked={agreeToTnC}
-            onChange={(e) => setAgreeToTnC(e.target.checked)}
-          />
-          <span className="text-sm text-gray-700">
-            By submitting request, I agree to & accept the{" "}
-            <a href="#" className="text-blue-600">
-              TnC
-            </a>{" "}
-            of the website & grant consent for using this information for
-            product & promotional offers.
-          </span>
-        </div>
+      {/* Main Booking Details */}
+      <div className="flex flex-col md:flex-row gap-6 mb-6 mt-4">
+        <DateSelection
+          selectedDate={selectedDate}
+          showCalendar={showCalendar}
+          setShowCalendar={setShowCalendar}
+          onDateSelect={(date) => {
+            setSelectedDate(date);
+            setShowCalendar(false);
+          }}
+        />
+        <TimeSlotSelection 
+          timeSlot={timeSlot} 
+          setTimeSlot={setTimeSlot} 
+        />
       </div>
+
+      {/* Diner Count */}
+      <div className="mb-6">
+        <DinerCount
+          numberOfDiners={numberOfDiners}
+          setNumberOfDiners={setNumberOfDiners}
+        />
+      </div>
+
+      {/* Special Requests & Additional Details */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <SpecialRequests
+          specialRequests={specialRequests}
+          setSpecialRequests={setSpecialRequests}
+        />
+        <AdditionalDetails
+          additionalDetails={additionalDetails}
+          setAdditionalDetails={setAdditionalDetails}
+        />
+      </div>
+
+      {/* Guest Information */}
+      <div className="mb-6">
+        <GuestInformation
+          guestName={guestName}
+          guestPhoneNumber={guestPhoneNumber}
+          guestEmail={guestEmail}
+          setGuestName={setGuestName}
+          setGuestPhoneNumber={setGuestPhoneNumber}
+          setGuestEmail={setGuestEmail}
+        />
+      </div>
+
+      {/* Terms and Conditions */}
+      <div className="mb-6">
+        <TermsAndConditions
+          agreeToTnC={agreeToTnC}
+          setAgreeToTnC={setAgreeToTnC}
+        />
+      </div>
+
       <BookingButton
-        text={"Place Your Reservation Request"}
+        text={"Place Your Reservation"}
         onSubmit={handleSubmit}
       />
     </div>

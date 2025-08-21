@@ -5,7 +5,7 @@ import BookingButton from "../Reservation/BookingButton";
 import { DatePicker } from "../Reservation/Accommodation/components/DatePicker";
 import { RoomSelection } from "../Reservation/Accommodation/components/RoomSelection";
 import { GuestInformation } from "../Reservation/Accommodation/components/GuestInformation";
-import { createAccommodationBooking } from "./api/bookingApi";
+import { createAccommodationBooking } from "./api/accommodationApi";
 import { formatDate } from "../../utils/bookingUtils";
 
 export default function AccommodationForm({ onSubmit }) {
