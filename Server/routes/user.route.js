@@ -35,5 +35,15 @@ router.post('/login',validateLogin,loginUser)
 // Get user profile route
 router.get('/profile/:userId', protect, getUserProfile);
 
+// accommodation room booking
+const { recieveAccommodationBooking, getAccommodationBookings } = require('../controllers/Reservation/accommodation.controller');
+
+// Create new accommodation booking
+router.post('/accommodations', protect, recieveAccommodationBooking)
+
+// Create new accommodation booking
+router.get('/accommodations/:bookingId', protect, getAccommodationBookings)
+module.exports = router;
+
 module.exports = router;
 

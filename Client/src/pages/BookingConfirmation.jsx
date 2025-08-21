@@ -1,39 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import {
-  FaCheckCircle,
-  FaCalendarAlt,
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaBed,
-  FaUtensils,
-  FaBuilding,
-  FaInfoCircle 
-} from "react-icons/fa";
+import { toast } from "react-hot-toast";
+import { fetchAccommodationDetails } from "../services/bookingService";
+import { getBookingType, formatDate } from "../utils/bookingUtils";
+import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone } from "react-icons/fa";
 
 const BookingConfirmation = () => {
   const location = useLocation();
-  const bookingData = location.state?.bookingData || {};
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [booking, setBooking] = useState(null);
 
-  // Helper function to determine booking type
-  const getBookingType = () => {
-    if (bookingData.arrivalDate) return "accommodation";
-    if (bookingData.selectedEvent) return "meeting";
-    if (bookingData.timeSlot) return "restaurant";
-    return null;
-  };
+  const initialData = location.state?.bookingData || {};
+  const bookingId = initialData._id || initialData.bookingId;
 
-  const bookingType = getBookingType();
+  useEffect(() => {
+    const getBooking = async () => {
+      if (!bookingId) {
+        setError("No booking ID found");
+        setLoading(false);
+        return;
+      }
 
-  // Format date helper function
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+      const token = import.meta.env.VITE_TEMP_TOKEN;
+      const { data, error: fetchError } = await fetchAccommodationDetails(bookingId, token);
+      
+      if (fetchError) {
+        setError(fetchError);
+        toast.error(fetchError);
+      } else {
+        setBooking(data);
+      }
+      
+      setLoading(false);
+    };
+
+    getBooking();
+  }, [bookingId]);
+
+  // Use the fetched booking data or fall back to initial data
+  const bookingData = booking || initialData;
+
+  const bookingType = getBookingType(bookingData);
 
   const renderBookingDetails = () => {
     switch (bookingType) {
@@ -44,14 +52,19 @@ const BookingConfirmation = () => {
               <FaCalendarAlt className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Check-in</p>
-                <p className="font-medium">{formatDate(bookingData.arrivalDate)}</p>
+                <p className="font-medium">
+                  {formatDate(booking.arrivalDate)}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3 mb-2">
               <FaCalendarAlt className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Check-out</p>
-                <p className="font-medium">{formatDate(bookingData.departureDate)}</p>
+                <p className="font-medium">
+                {formatDate(booking.departureDate)}
+
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3 mb-2">
@@ -59,18 +72,22 @@ const BookingConfirmation = () => {
               <div>
                 <p className="text-sm text-gray-600">Rooms and Guests</p>
                 <p className="font-medium">
-                  {bookingData.rooms?.length} Room(s), {bookingData.totalAdults} Adult(s)
-                  {bookingData.totalChildren > 0 && `, ${bookingData.totalChildren} Children`}
+                  {booking.rooms.length} Room(s), {booking.totalAdults}{" "}
+                  Adult(s)
+                  {booking.totalChildren > 0 &&
+                    `, ${booking.totalChildren} Children`}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <FaUser className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Purpose of Travel</p>
-                <p className="font-medium capitalize">{bookingData.purposeOfTravel}</p>
+                <p className="font-medium capitalize">
+                  {bookingData.purposeOfTravel}
+                </p>
               </div>
-            </div>
+            </div> */}
           </div>
         );
 
@@ -89,7 +106,8 @@ const BookingConfirmation = () => {
               <div>
                 <p className="text-sm text-gray-600">Event Duration</p>
                 <p className="font-medium">
-                  {formatDate(bookingData.startDate)} - {formatDate(bookingData.endDate)}
+                  {formatDate(bookingData.startDate)} -{" "}
+                  {formatDate(bookingData.endDate)}
                 </p>
               </div>
             </div>
@@ -97,7 +115,9 @@ const BookingConfirmation = () => {
               <FaUser className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Number of Guests</p>
-                <p className="font-medium">{bookingData.numberOfGuests} Guests</p>
+                <p className="font-medium">
+                  {bookingData.numberOfGuests} Guests
+                </p>
               </div>
             </div>
             {bookingData.numberOfRooms > 0 && (
@@ -105,7 +125,9 @@ const BookingConfirmation = () => {
                 <FaBed className="text-gray-500" />
                 <div>
                   <p className="text-sm text-gray-600">Rooms Required</p>
-                  <p className="font-medium">{bookingData.numberOfRooms} Room(s)</p>
+                  <p className="font-medium">
+                    {bookingData.numberOfRooms} Room(s)
+                  </p>
                 </div>
               </div>
             )}
@@ -119,7 +141,9 @@ const BookingConfirmation = () => {
               <FaCalendarAlt className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Date</p>
-                <p className="font-medium">{formatDate(bookingData.selectedDate)}</p>
+                <p className="font-medium">
+                  {formatDate(bookingData.selectedDate)}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3 mb-2">
@@ -133,7 +157,9 @@ const BookingConfirmation = () => {
               <FaUser className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Number of Diners</p>
-                <p className="font-medium">{bookingData.numberOfDiners} Person(s)</p>
+                <p className="font-medium">
+                  {bookingData.numberOfDiners} Person(s)
+                </p>
               </div>
             </div>
             {bookingData.specialRequests && (
@@ -154,33 +180,54 @@ const BookingConfirmation = () => {
   };
 
   const renderContactDetails = () => {
-    const name = bookingData.guestName || bookingData.name;
-    const email = bookingData.guestEmail || bookingData.email;
-    const phone = bookingData.guestPhoneNumber || bookingData.phoneNumber;
+    // const name = bookingData.guestName || bookingData.name;
+    // const email = bookingData.guestEmail || bookingData.email;
+    // const phone = bookingData.guestPhoneNumber || bookingData.phoneNumber;
 
     return (
       <>
-        {name && (
+        {booking.guestInfo.name && (
           <div className="flex items-center gap-3 mb-2">
             <FaUser className="text-gray-500" />
-            <p>{name}</p>
+            <p>{booking.guestInfo.name}</p>
           </div>
         )}
-        {email && (
+        {booking.guestInfo.email && (
           <div className="flex items-center gap-3 mb-2">
             <FaEnvelope className="text-gray-500" />
-            <p>{email}</p>
+            <p>{booking.guestInfo.email}</p>
           </div>
         )}
-        {phone && (
+        {booking.guestInfo.phoneNumber && (
           <div className="flex items-center gap-3">
             <FaPhone className="text-gray-500" />
-            <p>{phone}</p>
+            <p>{booking.guestInfo.phoneNumber}</p>
           </div>
         )}
       </>
     );
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-600 text-center">
+          <p className="text-xl mb-2">Error</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 font-helvetica-neue">

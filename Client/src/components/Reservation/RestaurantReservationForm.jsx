@@ -13,7 +13,7 @@ import Calendar from "./Calender";
 import FullLogo from "../FullLogo";
 import BookingButton from "./BookingButton";
 
-export default function RestaurantForm({ onSubmit }) {
+export default function RestaurantReservationForm({ onSubmit }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [numberOfDiners, setNumberOfDiners] = useState(1);
@@ -263,8 +263,10 @@ export default function RestaurantForm({ onSubmit }) {
           </span>
         </div>
       </div>
-      <BookingButton text={"Place Your Reservation Request"} onSubmit={handleSubmit} />
+      <BookingButton
+        text={"Place Your Reservation Request"}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
-

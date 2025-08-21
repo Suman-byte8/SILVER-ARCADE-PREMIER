@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import { generateCalendarDays } from './generateCalendarDays';
+import { generateCalendarDays } from '../../utils/generateCalendarDays';
 
 const Calendar = ({ selectedDate, onDateSelect, minDate, maxDate }) => {
     const getSafeDate = (date) => {

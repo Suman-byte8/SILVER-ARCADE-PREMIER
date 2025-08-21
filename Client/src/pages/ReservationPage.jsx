@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AccommodationForm from "../components/Reservation/AccommodationForm";
-import RestaurantForm from "../components/Reservation/RestaurantForm";
+import RestaurantReservationForm from "../components/Reservation/RestaurantReservationForm";
 import MeetingWeddingForm from "../components/Reservation/MeetingWeddingForm";
 import InfoPanel from "../components/Reservation/InfoPanel";
 import ReservationSidebar from "../components/Reservation/ReservationSidebar";
@@ -76,7 +76,7 @@ export default function ReservationPage() {
       case "accommodation":
         return <AccommodationForm onSubmit={handleBookingSubmit} />;
       case "restaurant":
-        return <RestaurantForm onSubmit={handleBookingSubmit} />;
+        return <RestaurantReservationForm onSubmit={handleBookingSubmit} />;
       case "meeting":
         return <MeetingWeddingForm onSubmit={handleBookingSubmit} />;
       default:
