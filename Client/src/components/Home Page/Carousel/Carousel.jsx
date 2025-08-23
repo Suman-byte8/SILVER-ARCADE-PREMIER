@@ -1,9 +1,9 @@
 import SemiNavbar from "./SemiNavbar";
 import Booking from "./Booking";
 import Slider from "./Slider";
-import banner1 from "../../../assets/Home/banner1.jpeg";
-import banner2 from "../../../assets/Home/banner2.jpg";
-import banner3 from "../../../assets/Home/banner3.jpg";
+import banner1 from "../../../assets/Banner/banner_1.jpg";
+import banner2 from "../../../assets/Banner/banner_2.jpg";
+import banner3 from "../../../assets/Banner/banner_3.jpg";
 import React from "react";
 
 const Carousel = () => {

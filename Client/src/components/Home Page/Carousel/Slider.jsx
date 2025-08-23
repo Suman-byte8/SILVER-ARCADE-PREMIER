@@ -1,54 +1,53 @@
-import React, { useState } from "react";
+import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
+import { Navigation, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/effect-fade";
 import "swiper/css/autoplay";
 import Details from "./Details";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-
-const Slider = ({slides,showDetails, classes}) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
+const Slider = ({ slides, showDetails, classes }) => {
   return (
-    <div className="w-full h-full relative">
+    <div className={`relative w-full h-full ${classes}`}>
       <Swiper
-        modules={[Navigation, Autoplay]}
+        modules={[Navigation, Autoplay, EffectFade]}
         spaceBetween={0}
         slidesPerView={1}
         loop={true}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
-        navigation={{
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false,
         }}
-        onSlideChange={(swiper) => setCurrentSlide(swiper.realIndex)}
-        className="w-full h-full"
+        navigation={{
+          prevEl: '.custom-prev',
+          nextEl: '.custom-next',
+        }}
+        className="h-full w-full"
       >
         {slides.map((slide, index) => (
-          <SwiperSlide key={index}>
-            <div className="w-full h-full relative">
+          <SwiperSlide key={index} className="h-full w-full">
+            {slide.content || (
               <img
                 src={slide.image}
                 alt={`Slide ${index + 1}`}
-                className={`w-full h-full object-cover ${classes}`}
+                className="w-full h-full object-cover"
               />
-            </div>
+            )}
           </SwiperSlide>
         ))}
       </Swiper>
-      
-      {/* Details component outside Swiper */}
-      {showDetails && slides[currentSlide] && (
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 md:left-20 md:top-1/2 md:-translate-y-1/2 md:translate-x-0  z-50">
+
+      {showDetails && slides[0] && (
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 md:left-20 md:top-1/2 md:-translate-y-1/2 md:translate-x-0 z-50">
           <Details
-            title={slides[currentSlide].details.title}
-            description={slides[currentSlide].details.description}
+            title={slides[0].details.title}
+            description={slides[0].details.description}
           />
         </div>
       )}
-      
+
       <div className="custom-prev absolute left-4 top-1/2 z-10 transform -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full cursor-pointer">
         <FaChevronLeft className="text-gray-700" />
       </div>

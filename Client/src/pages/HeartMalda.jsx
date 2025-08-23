@@ -7,7 +7,7 @@ import {
   FaStar,
   FaArrowRight,
 } from "react-icons/fa";
-import MaldaTownVideo from "../assets/Home/Videos/MaldaTown.mp4";
+import MaldaTownVideo from "../assets/Videos/MaldaTown.mp4";
 import { Link } from "react-router-dom";
 
 export default function OurHeartMalda() {

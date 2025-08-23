@@ -3,7 +3,7 @@ import Amenities from "../components/About Us/Amenities";
 import Service from "../components/About Us/Service";
 import IntroText from "../components/About Us/IntroText";
 import Gallery from "../components/About Us/Gallery";
-import HotelVideo from "../assets/Home/Videos/HotelVideo.mp4";
+import HotelVideo from "../assets/Videos/HotelVideo.mp4";
 
 const AboutUs = () => {
 
