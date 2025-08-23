@@ -1,10 +1,34 @@
 import React, { useState } from "react";
 import FullLogo from "../../FullLogo";
 import DescLayout from "./DescLayout";
-import img1 from "../../../assets/DistinctImages/Rooms&Suites/room_1.jpg";
-import img2 from "../../../assets/DistinctImages/Rooms&Suites/room_2.jpg";
-import img3 from "../../../assets/DistinctImages/Rooms&Suites/room_3.jpg";
-import img4 from "../../../assets/DistinctImages/Rooms&Suites/room_4.jpg";
+// Local images for "Rooms & Suites"
+import img1 from "../../../assets/DistinctImages/Rooms&Suites/room_1.webp";
+import img2 from "../../../assets/DistinctImages/Rooms&Suites/room_2.webp";
+import img3 from "../../../assets/DistinctImages/Rooms&Suites/room_3.webp";
+import img4 from "../../../assets/DistinctImages/Rooms&Suites/room_4.webp";
+
+// local images for "Dining"
+import dinImg1 from "../../../assets/DistinctImages/Dining/dining_1.webp";
+import dinImg2 from "../../../assets/DistinctImages/Dining/dining_2.webp";
+import dinImg3 from "../../../assets/DistinctImages/Dining/dining_3.webp";
+import dinImg4 from "../../../assets/DistinctImages/Dining/dining_4.webp";
+import dinImg5 from "../../../assets/DistinctImages/Dining/dining_5.webp";
+import dinImg6 from "../../../assets/DistinctImages/Dining/dining_6.webp";
+import dinImg7 from "../../../assets/DistinctImages/Dining/dining_7.webp";
+
+// local images for "Banquets & Events"
+import banImg1 from "../../../assets/DistinctImages/Banquets/banquet_1.webp";
+import banImg2 from "../../../assets/DistinctImages/Banquets/banquet_2.webp";
+import banImg3 from "../../../assets/DistinctImages/Banquets/banquet_3.webp";
+import banImg4 from "../../../assets/DistinctImages/Banquets/banquet_4.webp";
+import banImg5 from "../../../assets/DistinctImages/Banquets/banquet_5.webp";
+import banImg6 from "../../../assets/DistinctImages/Banquets/banquet_6.webp";
+import banImg7 from "../../../assets/DistinctImages/Banquets/banquet_7.webp";
+import banImg8 from "../../../assets/DistinctImages/Banquets/banquet_8.webp";
+
+// local images for "Bar & Lounge"
+import barImg1 from "../../../assets/DistinctImages/Bar/bar_1.webp";
+
 import { optimizeImage } from "../../../utils/imageOptimizer"; // Add this import
 
 const Distinctive = () => {
@@ -13,8 +37,8 @@ const Distinctive = () => {
     { name: "Dining" },
     { name: "Banquets & Events" },
     { name: "Bar & Lounge" },
-    { name: "Facilities" },
-    { name: "Location" },
+    // { name: "Facilities" },
+    // { name: "Location" },
   ];
 
   const linksDescription = [
@@ -45,12 +69,32 @@ const Distinctive = () => {
       desc: "Silver Arcade Premier’s Dining options serve up a culinary odyssey that’s hard to forget. Dive into regional richness at NH-16 with authentic Bengali and South Indian dishes, or enjoy global flavors and lively open kitchens at Masala Zone. The setting is contemporary yet welcoming, and guests consistently compliment the flavorful spreads and warm service. Whether it's waking up with breakfast or feasting at lunch or dinner, the dining scene complements the hotel’s boutique class with flair and efficiency.",
       img: [
         {
-          original: "https://silverarcadepremier.com/images/dining/masala-zone.jpg",
-          compressed: "https://silverarcadepremier.com/images/dining/masala-zone.jpg",
+          original: dinImg1,
+          compressed: optimizeImage(dinImg1, { quality: 80, maxWidth: 1200 }),
         },
         {
-          original: "https://silverarcadepremier.com/images/dining/nh16.jpg",
-          compressed: "https://silverarcadepremier.com/images/dining/nh16.jpg",
+          original: dinImg2,
+          compressed: optimizeImage(dinImg2, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: dinImg3,
+          compressed: optimizeImage(dinImg3, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: dinImg4,
+          compressed: optimizeImage(dinImg4, { quality: 80, maxWidth: 1200 }),
+        }, 
+        {
+          original: dinImg5,
+          compressed: optimizeImage(dinImg5, { quality: 80, maxWidth: 1200 }),
+        }, 
+        {
+          original: dinImg6,
+          compressed: optimizeImage(dinImg4, { quality: 80, maxWidth: 1200 }),
+        }, 
+        {
+          original: dinImg7,
+          compressed: optimizeImage(dinImg7, { quality: 80, maxWidth: 1200 }),
         },
       ],
     },
@@ -59,12 +103,36 @@ const Distinctive = () => {
       desc: "Looking to host in style? Silver Arcade Premier’s Banquets & Events spaces offer a classy backdrop for your weddings, meetings, or social events. Equipped with modern audio-visual tech, flexible seating layouts, and attentive staff, every gathering—whether business-oriented or celebratory—feels seamless and sophisticated. Guests love how the hotel effortlessly balances elegance and functionality, making events feel grand without being ostentatious, and leaving lasting impressions.",
       img: [
         {
-          original: "https://silverarcadepremier.com/images/banquets/banquet-hall.jpg",
-          compressed: "https://silverarcadepremier.com/images/banquets/banquet-hall.jpg",
+          original: banImg1,
+          compressed: optimizeImage(banImg1, { quality: 80, maxWidth: 1200 }),
         },
         {
-          original: "https://silverarcadepremier.com/images/banquets/conference.jpg",
-          compressed: "https://silverarcadepremier.com/images/banquets/conference.jpg",
+          original: banImg2,
+          compressed: optimizeImage(banImg2, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: banImg3,
+          compressed: optimizeImage(banImg3, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: banImg4,
+          compressed: optimizeImage(banImg4, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: banImg5,
+          compressed: optimizeImage(banImg1, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: banImg6,
+          compressed: optimizeImage(banImg6, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: banImg7,
+          compressed: optimizeImage(banImg7, { quality: 80, maxWidth: 1200 }),
+        },
+        {
+          original: banImg8,
+          compressed: optimizeImage(banImg8, { quality: 80, maxWidth: 1200 }),
         },
       ],
     },
@@ -73,35 +141,35 @@ const Distinctive = () => {
       desc: "The Bar & Lounge, known as Cocktails & Dreams, hits the perfect chill-out note. Sip on curated cocktails or mocktails with acoustic tunes floating in the air—ambience is low-key yet luxe. It’s where guests unwind after a busy day exploring Malda or closing meetings. The bar’s vibe strikes a thoughtful balance: relaxed, elegant, and inviting—making it an ideal spot to decompress in boutique comfort.",
       img: [
         {
-          original: "https://silverarcadepremier.com/images/bar/lounge.jpg",
-          compressed: "https://silverarcadepremier.com/images/bar/lounge.jpg",
+          original: barImg1,
+          compressed: optimizeImage(barImg1, { quality: 80, maxWidth: 1200 }),
         },
       ],
     },
-    {
-      name: "Facilities",
-      desc: "Silver Arcade Premier delivers a full suite of Facilities that elevate convenience to class. From valet/self-parking and rooftop terraces to a business centre, 24-hour front desk, concierge, and laundry services, they’ve covered the essentials with flair. Rooms come with safes, mini-bars, desks, and ironing boards. Combined with daily housekeeping and reliable Wi-Fi, these features ensure your stay is effortless and upscale, whether you're here on corporate duty or solo explorations.",
-      img: [
-        {
-          original: "https://silverarcadepremier.com/images/facilities/rooftop.jpg",
-          compressed: "https://silverarcadepremier.com/images/facilities/rooftop.jpg",
-        },
-        {
-          original: "https://silverarcadepremier.com/images/facilities/lobby.jpg",
-          compressed: "https://silverarcadepremier.com/images/facilities/lobby.jpg",
-        },
-      ],
-    },
-    {
-      name: "Location",
-      desc: "Location-wise, Silver Arcade Premier nails it. Situated in the heart of Malda near Rathbari More (Ward No 24), it’s a breezy couple-minute drive from Malda Town Railway Station, with easy access to local markets and attractions. Despite being in the city’s buzz, the hotel retains that boutique calm inside. Guests consistently praise its central convenience for both sightseeing and business transit—while still offering a peaceful escape just steps from local action.",
-      img: [
-        {
-          original: "https://silverarcadepremier.com/images/location/exterior.jpg",
-          compressed: "https://silverarcadepremier.com/images/location/exterior.jpg",
-        },
-      ],
-    },
+    // {
+    //   name: "Facilities",
+    //   desc: "Silver Arcade Premier delivers a full suite of Facilities that elevate convenience to class. From valet/self-parking and rooftop terraces to a business centre, 24-hour front desk, concierge, and laundry services, they’ve covered the essentials with flair. Rooms come with safes, mini-bars, desks, and ironing boards. Combined with daily housekeeping and reliable Wi-Fi, these features ensure your stay is effortless and upscale, whether you're here on corporate duty or solo explorations.",
+    //   img: [
+    //     {
+    //       original: "https://silverarcadepremier.com/images/facilities/rooftop.jpg",
+    //       compressed: "https://silverarcadepremier.com/images/facilities/rooftop.jpg",
+    //     },
+    //     {
+    //       original: "https://silverarcadepremier.com/images/facilities/lobby.jpg",
+    //       compressed: "https://silverarcadepremier.com/images/facilities/lobby.jpg",
+    //     },
+    //   ],
+    // },
+    // {
+    //   name: "Location",
+    //   desc: "Location-wise, Silver Arcade Premier nails it. Situated in the heart of Malda near Rathbari More (Ward No 24), it’s a breezy couple-minute drive from Malda Town Railway Station, with easy access to local markets and attractions. Despite being in the city’s buzz, the hotel retains that boutique calm inside. Guests consistently praise its central convenience for both sightseeing and business transit—while still offering a peaceful escape just steps from local action.",
+    //   img: [
+    //     {
+    //       original: "https://silverarcadepremier.com/images/location/exterior.jpg",
+    //       compressed: "https://silverarcadepremier.com/images/location/exterior.jpg",
+    //     },
+    //   ],
+    // },
   ];
 
   const [selectedLink, setSelectedLink] = useState(linksDescription[0]);
