@@ -1,12 +1,13 @@
 import React from "react";
+import { Img } from "react-image";
 
 const RoomCard = ({ room, key }) => {
   return (
     <div
       key={key}
-      className="border border-gray-300 rounded-lg overflow-hidden flex flex-col shadow-md"
+      className="border border-gray-300 rounded-lg overflow-hidden flex flex-col shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
     >
-      <div className="w-full h-48 overflow-hidden">
+      <div className="w-full h-80 overflow-hidden">
         <img
           src={room.image}
           alt={room.name}

@@ -12,6 +12,7 @@ const navLinks = [
   { name: "Our Facilities", path: "/our-facilities" },
   { name: "Our Wings", path: "/our-offers" },
   { name: "About Us", path: "/about-us" },
+  { name: "Gallery", path: "/gallery" },
   { name: "Our Heart Malda", path: "/heart-malda" },
 ];
 

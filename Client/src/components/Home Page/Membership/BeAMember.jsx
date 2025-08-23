@@ -1,10 +1,12 @@
 import React from 'react'
 import FullLogo from '../../FullLogo'
 import { Link } from 'react-router-dom'
+import img from "../../../assets/Membership/beAmember.webp"
+import { Img } from 'react-image'
 
 const BeAMember = () => {
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col-reverse md:flex-row border-2 border-gray-200 m-8">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col-reverse md:flex-row border-2 border-gray-200 m-8  ">
     {/* Left Section */}
     <div className="flex-1 p-6 flex flex-col justify-center gap-4">
       {/* Logo & Title */}
@@ -13,16 +15,13 @@ const BeAMember = () => {
       </div>
 
       {/* Subtitle */}
-      <p className="text-gray-700">
-        A world of exclusive rewards, designed for our most valued guests.
-      </p>
+      <h1 className="text-gray-800 text-2xl font-medium leading-relaxed ">
+      Premier Privileges
+      </h1>
 
       {/* Highlight Text */}
       <p className="text-gray-600 text-sm leading-relaxed py-3 rounded-md">
-        Experience simplicity, transparency, and flexibility with Club ITC.
-        Effortlessly earn and redeem rewards while enjoying exclusive tier
-        based benefits and privileges — reward nights, room upgrades, gourmet
-        dining, spa indulgences, and more.
+      Silver Arcade Premier brings you a world of exclusive privileges, thoughtfully designed for our most valued guests. With unmatched simplicity and flexibility, enjoy earning and redeeming rewards that elevate every stay. From complimentary room upgrades and curated dining experiences to wellness indulgences and personalized services, our loyalty offerings ensure that each visit to Silver Arcade Premier is not just a stay, but a memorable journey.
       </p>
 
       {/* Buttons */}
@@ -37,11 +36,11 @@ const BeAMember = () => {
     </div>
 
     {/* Right Section - Image */}
-    <div className="flex-1">
-      <img
-        src="https://www.itchotels.com/content/dam/itchotels/in/umbrella/club-itc-2-0/home-page/d/club-itc.jpg"
+    <div className="flex-1 h-[400px] md:h-auto relative">
+      <Img
+        src={img}
         alt="Piano Scene"
-        className="w-full h-full object-cover rounded-r-xl"
+        className="w-full h-full object-cover rounded-r-xl absolute inset-0"
       />
     </div>
   </div>

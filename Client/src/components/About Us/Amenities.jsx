@@ -29,14 +29,14 @@ const amenityDetails = [
 const Amenities = () => {
   return (
     <div className="w-full bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="w-full mx-auto px-6">
         {/* Section Title */}
         <h2 className="text-3xl md:text-4xl mb-10 text-center text-gray-800 font-light tracking-wide">
           Our Amenities
         </h2>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {amenityDetails.map((amenity, index) => (
             <Card key={index} obj={amenity} index={index} />
           ))}

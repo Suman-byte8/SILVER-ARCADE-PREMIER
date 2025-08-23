@@ -1,13 +1,14 @@
 import React from 'react'
+import { Img } from "react-image";
 
 const Card = ({obj, index}) => {
   return (
     <div
     key={index}
-    className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
+    className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col h-[400px] w-[280px]"
   >
     {/* Image */}
-    <img
+    <Img
       src={obj.image}
       alt={obj.title}
       className="w-full h-48 object-cover"

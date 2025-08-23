@@ -1,4 +1,5 @@
 import React from "react";
+import { Img } from "react-image";
 import {
   FaMapMarkerAlt,
   FaHistory,
@@ -153,7 +154,7 @@ export default function OurHeartMalda() {
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl">
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
-                    <img
+                    <Img
                       src={feature.image}
                       alt={feature.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

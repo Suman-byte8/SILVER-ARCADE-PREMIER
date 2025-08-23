@@ -1,53 +1,16 @@
 import React from "react";
 import Slider from "../Carousel/Slider";
 import FullLogo from "../../FullLogo";
+import { Img } from "react-image";
 
 const ImageComponent = ({ image, alt }) => {
-  // Check if image is a local import or URL
-  const isLocalImage = typeof image === 'object' && image.original;
-
-  if (isLocalImage) {
-    return (
-      <picture>
-        <source
-          srcSet={image.original}
-          media="(min-width: 1024px)"
-          type="image/webp"
-        />
-        <source
-          srcSet={image.original}
-          media="(min-width: 640px)"
-          type="image/webp"
-        />
-        <img
-          src={image.original}
-          alt={alt}
-          className="w-full h-full object-cover rounded-xl"
-          loading="lazy"
-        />
-      </picture>
-    );
-  }
-
+  const imageUrl = typeof image === 'object' && image.original ? image.original : image;
   return (
-    <picture>
-      <source
-        srcSet={image}
-        media="(min-width: 1024px)"
-        type="image/webp"
-      />
-      <source
-        srcSet={image}
-        media="(min-width: 640px)"
-        type="image/webp"
-      />
-      <img
-        src={image}
-        alt={alt}
-        className="w-full h-full object-cover rounded-xl"
-        loading="lazy"
-      />
-    </picture>
+    <Img
+      src={imageUrl}
+      alt={alt}
+      className="w-full h-full object-cover rounded-xl"
+    />
   );
 };
 
@@ -55,7 +18,6 @@ const DescLayout = ({ desc }) => {
   if (!desc) return null;
 
   const renderImage = (image) => {
-    const imageUrl = typeof image === 'string' ? image : image.original;
     return <ImageComponent image={image} alt={desc.name} />;
   };
 

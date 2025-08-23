@@ -12,6 +12,8 @@ import ReservationPage from './pages/ReservationPage';
 import OurHeartMalda from './pages/HeartMalda';
 import Membership from './pages/Membership';
 import BookingConfirmation from './pages/BookingConfirmation';
+import GalleryPage from './pages/GalleryPage';
+
 
 const App = () => {
   return (
@@ -26,6 +28,7 @@ const App = () => {
           <Route path="/our-facilities" element={<OurFacilities />}/>
           <Route path="/our-offers" element={<OfferPage />}/>
           <Route path="/reservation" element={<ReservationPage />}/>
+          <Route path="/gallery" element={<GalleryPage />}/>
           <Route path="/heart-malda" element={<OurHeartMalda />}/>
           <Route path="/membership-area" element={<Membership />}/>
           <Route path="/booking-confirmation" element={<BookingConfirmation />}/>

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { Img } from 'react-image';
 
 const Card = ({offers, className}) => {
     

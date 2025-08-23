@@ -6,6 +6,7 @@ import banner2 from "../../../assets/Banner/banner_2.jpg";
 import banner3 from "../../../assets/Banner/banner_3.jpg";
 import React from "react";
 
+
 const Carousel = () => {
   const slides = [
     {

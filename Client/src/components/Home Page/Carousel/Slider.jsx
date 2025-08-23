@@ -7,6 +7,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/autoplay";
 import Details from "./Details";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { Img } from "react-image";
 
 const Slider = ({ slides, showDetails, classes }) => {
   return (

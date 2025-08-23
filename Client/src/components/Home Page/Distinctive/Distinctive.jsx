@@ -37,8 +37,7 @@ const Distinctive = () => {
     { name: "Dining" },
     { name: "Banquets & Events" },
     { name: "Bar & Lounge" },
-    // { name: "Facilities" },
-    // { name: "Location" },
+
   ];
 
   const linksDescription = [
@@ -146,30 +145,7 @@ const Distinctive = () => {
         },
       ],
     },
-    // {
-    //   name: "Facilities",
-    //   desc: "Silver Arcade Premier delivers a full suite of Facilities that elevate convenience to class. From valet/self-parking and rooftop terraces to a business centre, 24-hour front desk, concierge, and laundry services, they’ve covered the essentials with flair. Rooms come with safes, mini-bars, desks, and ironing boards. Combined with daily housekeeping and reliable Wi-Fi, these features ensure your stay is effortless and upscale, whether you're here on corporate duty or solo explorations.",
-    //   img: [
-    //     {
-    //       original: "https://silverarcadepremier.com/images/facilities/rooftop.jpg",
-    //       compressed: "https://silverarcadepremier.com/images/facilities/rooftop.jpg",
-    //     },
-    //     {
-    //       original: "https://silverarcadepremier.com/images/facilities/lobby.jpg",
-    //       compressed: "https://silverarcadepremier.com/images/facilities/lobby.jpg",
-    //     },
-    //   ],
-    // },
-    // {
-    //   name: "Location",
-    //   desc: "Location-wise, Silver Arcade Premier nails it. Situated in the heart of Malda near Rathbari More (Ward No 24), it’s a breezy couple-minute drive from Malda Town Railway Station, with easy access to local markets and attractions. Despite being in the city’s buzz, the hotel retains that boutique calm inside. Guests consistently praise its central convenience for both sightseeing and business transit—while still offering a peaceful escape just steps from local action.",
-    //   img: [
-    //     {
-    //       original: "https://silverarcadepremier.com/images/location/exterior.jpg",
-    //       compressed: "https://silverarcadepremier.com/images/location/exterior.jpg",
-    //     },
-    //   ],
-    // },
+
   ];
 
   const [selectedLink, setSelectedLink] = useState(linksDescription[0]);

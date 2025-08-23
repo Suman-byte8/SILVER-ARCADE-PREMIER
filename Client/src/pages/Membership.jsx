@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Img } from "react-image";
 
 export default function Membership() {
   const [form, setForm] = useState({
@@ -23,7 +24,7 @@ export default function Membership() {
       {/* Left Form Section */}
       <div className="w-full space-y-4">
         <h1 className="text-2xl font-semibold flex items-center space-x-2">
-          <img src="/logo.png" alt="Logo" className="h-8" />
+          <Img src="/logo.png" alt="Logo" className="h-8" />
           <span>Membership Plan</span>
         </h1>
         <p className="text-gray-600">
@@ -151,7 +152,7 @@ export default function Membership() {
 
       {/* Right Image Section */}
       <div className="w-full flex justify-center items-center rounded-lg">
-        <img
+        <Img
           src="https://images.unsplash.com/photo-1565688842882-e0b2693d349a?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8bWVtYmVyc2hpcHxlbnwwfHwwfHx8MA%3D%3D"
           alt="Membership"
           className="rounded-lg object-contain w-full h-full max-w-md"
