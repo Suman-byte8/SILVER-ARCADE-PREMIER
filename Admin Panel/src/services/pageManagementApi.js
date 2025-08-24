@@ -96,3 +96,85 @@ export const deleteBanner = async (id, token) => {
         throw error;
     }
 };
+
+/**
+ * Fetches distinctive content.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<any>} The response data from the server.
+ */
+export const fetchDistinctives = async (token) => {
+    try {
+        const response = await axios.get(`${API_URL}/content/home/distinctives`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching distinctives:', error);
+        throw error;
+    }
+};
+
+/**
+ * Adds a new distinctive feature.
+ * @param {FormData} formData - The form data containing title, description, and images.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<any>} The response data from the server.
+ */
+export const addDistinctive = async (formData, token) => {
+    try {
+        const response = await axios.post(`${API_URL}/content/home/add-distinctive`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error adding distinctive feature:', error);
+        throw error;
+    }
+};
+
+/**
+ * Updates a distinctive feature.
+ * @param {string} id - The ID of the distinctive feature to update.
+ * @param {FormData} formData - The form data containing title, description, and images.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<any>} The response data from the server.
+ */
+export const updateDistinctive = async (id, formData, token) => {
+    try {
+        const response = await axios.put(`${API_URL}/content/home/distinctive/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating distinctive feature:', error);
+        throw error;
+    }
+};
+
+/**
+ * Deletes a distinctive feature by ID.
+ * @param {string} id - The ID of the distinctive feature to delete.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<any>} The response data from the server.
+ */
+export const deleteDistinctive = async (id, token) => {
+    try {
+        const response = await axios.delete(`${API_URL}/content/home/distinctive/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting distinctive feature:', error);
+        throw error;
+    }
+};
