@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
+import imageCompression from "browser-image-compression";
 import {
   fetchBanners,
   deleteBanner,
   addHeroBanner,
+  updateBanner,
 } from "../../services/pageManagementApi";
 
 const AdminBannerPreview = () => {
@@ -39,17 +41,17 @@ const AdminBannerPreview = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this banner?")) {
-      try {
-        await deleteBanner(id);
-        setBanners((prev) => prev.filter((banner) => banner.id !== id));
-        console.log("Banner deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting banner:", error);
-      }
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this banner?")) {
+  //     try {
+  //       await deleteBanner(id);
+  //       setBanners((prev) => prev.filter((banner) => banner.id !== id));
+  //       console.log("Banner deleted successfully!");
+  //     } catch (error) {
+  //       console.error("Error deleting banner:", error);
+  //     }
+  //   }
+  // };
 
   const handleEdit = (banner) => {
     setEditingBanner(banner);
@@ -63,25 +65,89 @@ const AdminBannerPreview = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await addHeroBanner(formData, token); // ⚠️ replace with update function if exists
-      setBanners((prev) =>
-        prev.map((b) => (b.id === editingBanner.id ? { ...b, ...formData } : b))
-      );
+      // Create FormData object for multipart upload
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      if (typeof formData.image !== "string") {
+        // if it's a new file
+        formDataToSend.append("image", formData.image);
+      }
+
+      // Use proper update function instead of addHeroBanner
+      await updateBanner(editingBanner._id, formDataToSend, token);
+
+      // Refresh banners after update
+      await loadBanners();
+
       setEditingBanner(null);
       setFormData({ title: "", description: "", image: "" });
-      console.log("Banner updated successfully!");
     } catch (error) {
       console.error("Error updating banner:", error);
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, image: file });
-      setPreview(URL.createObjectURL(file)); // generate local preview
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this banner?")) {
+      try {
+        await deleteBanner(id, token); // Pass the token here
+        setBanners((prev) => prev.filter((banner) => banner._id !== id));
+        console.log("Banner deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting banner:", error);
+      }
     }
   };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        // Compress the image with a maximum size of 2MB and maximum dimension of 1920px
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 2,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        });
+
+        // Convert the compressed blob back to a File object
+        const compressedFileAsFile = new File([compressedFile], file.name, {
+          type: compressedFile.type,
+          lastModified: Date.now(),
+        });
+
+        // Update formData with the compressed file
+        setFormData({ ...formData, image: compressedFileAsFile });
+
+        // Generate preview URL without storing it in state to avoid memory leaks
+        const previewUrl = URL.createObjectURL(compressedFileAsFile);
+
+        // Revoke previous URL if exists to prevent memory leaks
+        if (preview) URL.revokeObjectURL(preview);
+
+        setPreview(previewUrl);
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        // If compression fails, fall back to original file
+        setFormData({ ...formData, image: file });
+
+        // Generate preview URL without storing it in state to avoid memory leaks
+        const previewUrl = URL.createObjectURL(file);
+
+        // Revoke previous URL if exists to prevent memory leaks
+        if (preview) URL.revokeObjectURL(preview);
+
+        setPreview(previewUrl);
+      }
+    }
+  };
+
+  // Add this cleanup in useEffect return function or when component unmounts:
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
 
   return (
     <div className="p-6">

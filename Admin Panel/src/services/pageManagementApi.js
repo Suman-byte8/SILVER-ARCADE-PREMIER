@@ -50,10 +50,42 @@ export const fetchBanners = async (token) => {
  * @param {string} token - The authentication token.
  * @returns {Promise<any>} The response data from the server.
  */
-export const deleteBanner = async (id, token) => {
-    // console.log("Token for deleting banner:", token); // Debugging line
+// export const deleteBanner = async (id, token) => {
+//     // console.log("Token for deleting banner:", token); // Debugging line
+//     try {
+//         const response = await axios.delete(`${API_URL}/content/home/banner/${id}`, {
+//             headers: {
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error deleting banner:', error);
+//         throw error;
+//     }
+// };
+
+
+// Add this update function
+export const updateBanner = async (id, formData, token) => {
     try {
-        const response = await axios.delete(`${API_URL}/content/home/banner/${id}`, {
+        const response = await axios.put(`${API_URL}/content/home/update-hero-banner/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating banner:', error);
+        throw error;
+    }
+};
+
+// Fix the delete function to include token
+export const deleteBanner = async (id, token) => {
+    try {
+        const response = await axios.delete(`${API_URL}/content/home/delete-hero-banner/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

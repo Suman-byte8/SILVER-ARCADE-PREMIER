@@ -93,7 +93,7 @@ async function addHeroBanner(req, res) {
 //   stream.end(req.file.buffer);
 // });
 const updateHeroBanner = (async (req, res) => {
-    const banner = await HeroBanner.findById(req.params.id);
+    const banner = await HeroBannerModel.findById(req.params.id);
 
     if (!banner) {
         return res.status(404).json({ success: false, message: "Banner not found" });
