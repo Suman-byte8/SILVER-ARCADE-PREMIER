@@ -8,8 +8,8 @@ import { FaRegEye } from "react-icons/fa";
 const DistinctiveSection = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [files, setFiles] = useState([]); // Multiple images
-  const [previews, setPreviews] = useState([]); // Preview URLs
+  const [files, setFiles] = useState([]); 
+  const [previews, setPreviews] = useState([]); 
 
   // Handle file selection & compression
   const handleFileChange = async (e) => {
@@ -70,12 +70,15 @@ const DistinctiveSection = () => {
     <form onSubmit={handleSaveChanges}>
       <div className="bg-white rounded-2xl shadow p-6 mb-10">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium text-gray-700 mb-4">
+          <h2 className="text-xl font-medium text-gray-700">
             Distinctive & Description
           </h2>
-          <Link to="/page-management/distinctive-preview" className="flex items-center gap-2 text-blue-500 cursor-pointer">
-              <FaRegEye /> Preview
-            </Link>
+          <Link
+            to="/page-management/distinctive-preview"
+            className="flex items-center gap-2 text-blue-500 cursor-pointer"
+          >
+            <FaRegEye /> Preview
+          </Link>
         </div>
         <input
           type="text"
@@ -93,36 +96,47 @@ const DistinctiveSection = () => {
         ></textarea>
       </div>
 
-      {/* Upload Images */}
+      {/* Upload Section */}
       <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-medium text-gray-700 mb-4">
-          Upload Images
-        </h2>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        <h2 className="text-xl font-medium text-gray-700 mb-4">Upload Images</h2>
 
-        {/* Previews */}
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {previews.map((src, i) => (
-            <div key={i} className="relative">
-              <img
-                src={src}
-                alt="preview"
-                className="w-full h-32 object-cover rounded-xl"
-              />
-              <button
-                type="button"
-                onClick={() => handleRemoveImage(i)}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-              >
-                <FiTrash2 size={16} />
-              </button>
-            </div>
-          ))}
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center relative">
+          <input
+            type="file"
+            className="hidden"
+            id="fileUpload"
+            onChange={handleFileChange}
+            multiple
+            accept="image/*"
+          />
+          <label htmlFor="fileUpload" className="cursor-pointer block">
+            {previews.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {previews.map((src, i) => (
+                  <div key={i} className="relative group">
+                    <img
+                      src={src}
+                      alt={`preview-${i}`}
+                      className="w-full h-32 object-cover rounded-xl border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(i)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <FiTrash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-500">
+                <span className="text-blue-500">Upload files</span> or Drag and Drop
+                <p className="text-xs mt-1">PNG, JPG, GIF up to 10MB</p>
+
+              </div>
+            )}
+          </label>
         </div>
       </div>
 
