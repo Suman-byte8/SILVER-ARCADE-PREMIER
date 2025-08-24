@@ -39,7 +39,7 @@ const Navbar = () => {
       {/* menu and logo */}
       <div className="text-white  flex items-center justify-between gap-4">
         <FaBars className="text-xl cursor-pointer md:hidden" onClick={toggleMenu} />
-        <Link to="/" className="font-semibold">SILVER ARCADE PREMIRE</Link>
+        <Link to="/" className="font-semibold uppercase">Silver arcade premier</Link>
       </div>
 
       {/* navigation links for desktop */}

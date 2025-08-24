@@ -4,56 +4,59 @@ const streamifier = require('streamifier');
 // functions for home page content management
 const HeroBannerModel = require("../../../schema/Client Content Models/Home/HeroBanner.model");
 
+// ADD hero banner function
 async function addHeroBanner(req, res) {
     try {
-        const { title, subtitle, description, url } = req.body; // remove 'image'
-        const imageFile = req.file;
-
-        // Validate required fields
-        if (!title || !description || !url || !imageFile) { // check for imageFile
-            return res.status(400).json({ message: 'All fields are required' });
+      const { title, subtitle, description, url } = req.body;
+      const imageFile = req.file;
+  
+      // ✅ Validation
+      if (!title || !description || !url || !imageFile) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+  
+      // ✅ Cloudinary Upload (stream)
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "hero_banners",
+          resource_type: "image",
+        },
+        async (error, result) => {
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            return res
+              .status(500)
+              .json({ message: "Error uploading image to Cloudinary" });
+          }
+  
+          // ✅ Save to DB with Cloudinary URL
+          const heroBanner = await HeroBannerModel.create({
+            title,
+            subtitle,
+            description,
+            image: result.secure_url, // 👈 Cloudinary hosted URL
+            url,
+            page: "home",
+            section: "hero",
+            isActive: true,
+          });
+  
+          res.status(201).json({
+            success: true,
+            message: "Hero banner added successfully",
+            heroBanner,
+          });
         }
-
-        // Upload image to Cloudinary using a stream
-        const uploadStream = cloudinary.uploader.upload_stream(
-            {
-                folder: 'hero_banners',
-                resource_type: 'image'
-            },
-            async (error, result) => {
-                if (error) {
-                    console.error('Cloudinary upload error:', error);
-                    return res.status(500).json({ message: 'Error uploading image to Cloudinary' });
-                }
-
-                // Create hero banner with the uploaded image URL
-                const heroBanner = await HeroBannerModel.create({
-                    title,
-                    subtitle,
-                    description,
-                    image: result.secure_url, // Use the URL from Cloudinary result
-                    url,
-                    page: 'home',
-                    section: 'hero',
-                    isActive: true
-                });
-
-                res.status(201).json({
-                    success: true,
-                    message: 'Hero banner added successfully',
-                    heroBanner
-                });
-            }
-        );
-
-        // Pipe the file buffer into the Cloudinary upload stream
-        streamifier.createReadStream(imageFile.buffer).pipe(uploadStream);
-
+      );
+  
+      // ✅ Pipe buffer to Cloudinary
+      streamifier.createReadStream(imageFile.buffer).pipe(uploadStream);
     } catch (error) {
-        console.error('Error adding hero banner:', error);
-        res.status(500).json({ message: 'Server error while adding hero banner' });
+      console.error("Error adding hero banner:", error);
+      res.status(500).json({ message: "Server error while adding hero banner" });
     }
-}
+  }
+  
 
 // updateHeroBanner function
 async function updateHeroBanner(req, res) {
