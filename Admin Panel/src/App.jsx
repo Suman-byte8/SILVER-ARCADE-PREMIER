@@ -14,6 +14,7 @@ import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
 import PageManagement from "./pages/PageManagement";
+import AdminBannerPreview from "./components/PageManagement/AdminBannerPreview";
 
 const MainLayout = ({ children }) => (
   <div className="flex h-screen bg-page dark:bg-page">
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/room-management/edit-room" element={renderWithLayout(EditRoomPage)} />
         <Route path="/menu-management" element={renderWithLayout(MenuManagement)} />
         <Route path="/page-management" element={renderWithLayout(PageManagement)} />
+        <Route path="/page-management/home-banner-preview" element={renderWithLayout(AdminBannerPreview)} />
       </Routes>
     </BrowserRouter>
   );

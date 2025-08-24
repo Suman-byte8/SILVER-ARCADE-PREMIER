@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaRegEye } from "react-icons/fa";
 import imageCompression from "browser-image-compression";
 import { addHeroBanner } from "../../services/pageManagementApi";
+import { Link } from "react-router-dom";
 
 const HomePageBanner = () => {
   const [headline, setHeadline] = useState("");
@@ -113,9 +114,9 @@ const HomePageBanner = () => {
           <h2 className="text-xl font-medium text-gray-700 mb-4">
             Home Page Banner Section
           </h2>
-            <span className="flex items-center gap-2 text-blue-500 cursor-pointer">
+            <Link to="/page-management/home-banner-preview" className="flex items-center gap-2 text-blue-500 cursor-pointer">
               <FaRegEye /> Preview
-            </span>
+            </Link>
         </div>
 
         <form onSubmit={handleSaveChanges} className="space-y-6">

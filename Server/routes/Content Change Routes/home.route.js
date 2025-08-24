@@ -67,7 +67,7 @@ const { addDistinctive, getDistinctives, updateDistinctive, deleteDistinctive } 
 router.post("/add-distinctive", protect, authorize("admin"), upload.array("images"), addDistinctive);
 
 // Get all
-router.get("/distinctives", getDistinctives);
+router.get("/distinctives", protect, getDistinctives);
 
 // Update
 router.put("/distinctive/:id", protect, authorize("admin"), updateDistinctive);

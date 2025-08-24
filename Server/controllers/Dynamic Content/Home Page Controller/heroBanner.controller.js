@@ -3,121 +3,143 @@ const streamifier = require('streamifier');
 
 // functions for home page content management
 const HeroBannerModel = require("../../../schema/Client Content Models/Home/HeroBanner.model");
+const asyncHandler = require('async-handler');
 
 // ADD hero banner function
 async function addHeroBanner(req, res) {
     try {
-      const { title, subtitle, description, url } = req.body;
-      const imageFile = req.file;
-  
-      // ✅ Validation
-      if (!title || !description || !url || !imageFile) {
-        return res.status(400).json({ message: "All fields are required" });
-      }
-  
-      // ✅ Cloudinary Upload (stream)
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: "hero_banners",
-          resource_type: "image",
-        },
-        async (error, result) => {
-          if (error) {
-            console.error("Cloudinary upload error:", error);
-            return res
-              .status(500)
-              .json({ message: "Error uploading image to Cloudinary" });
-          }
-  
-          // ✅ Save to DB with Cloudinary URL
-          const heroBanner = await HeroBannerModel.create({
-            title,
-            subtitle,
-            description,
-            image: result.secure_url, 
-            url,
-            page: "home",
-            section: "hero",
-            isActive: true,
-          });
-  
-          res.status(201).json({
-            success: true,
-            message: "Hero banner added successfully",
-            heroBanner,
-          });
-        }
-      );
-  
-      // ✅ Pipe buffer to Cloudinary
-      streamifier.createReadStream(imageFile.buffer).pipe(uploadStream);
-    } catch (error) {
-      console.error("Error adding hero banner:", error);
-      res.status(500).json({ message: "Server error while adding hero banner" });
-    }
-  }
-  
-
-// updateHeroBanner function
-async function updateHeroBanner(req, res) {
-    try {
-        const { id } = req.params;
         const { title, subtitle, description, url } = req.body;
         const imageFile = req.file;
 
-        // Basic validation for text fields
-        if (!title || !description || !url) {
-            return res.status(400).json({ message: 'Title, description, and URL are required' });
+        // ✅ Validation
+        if (!title || !description || !url || !imageFile) {
+            return res.status(400).json({ message: "All fields are required" });
         }
 
-        const heroBanner = await HeroBannerModel.findById(id);
-        if (!heroBanner) {
-            return res.status(404).json({ message: 'Hero banner not found' });
-        }
-
-        // This function will handle the final update and response
-        const finalUpdate = async (imageUrl) => {
-            heroBanner.title = title;
-            heroBanner.subtitle = subtitle;
-            heroBanner.description = description;
-            heroBanner.url = url;
-            if (imageUrl) {
-                heroBanner.image = imageUrl;
-            }
-            await heroBanner.save();
-            res.status(200).json({
-                success: true,
-                message: 'Hero banner updated successfully',
-                heroBanner
-            });
-        };
-
-        // If a new image is uploaded, upload it to Cloudinary
-        if (imageFile) {
-            const uploadStream = cloudinary.uploader.upload_stream(
-                {
-                    folder: 'hero_banners',
-                    resource_type: 'image'
-                },
-                (error, result) => {
-                    if (error) {
-                        console.error('Cloudinary upload error:', error);
-                        return res.status(500).json({ message: 'Error uploading image to Cloudinary' });
-                    }
-                    finalUpdate(result.secure_url);
+        // ✅ Cloudinary Upload (stream)
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: "hero_banners",
+                resource_type: "image",
+            },
+            async (error, result) => {
+                if (error) {
+                    console.error("Cloudinary upload error:", error);
+                    return res
+                        .status(500)
+                        .json({ message: "Error uploading image to Cloudinary" });
                 }
-            );
-            streamifier.createReadStream(imageFile.buffer).pipe(uploadStream);
-        } else {
-            // If no new image, just update the text fields
-            finalUpdate();
-        }
 
+                // ✅ Save to DB with Cloudinary URL
+                const heroBanner = await HeroBannerModel.create({
+                    title,
+                    subtitle,
+                    description,
+                    image: result.secure_url,
+                    url,
+                    page: "home",
+                    section: "hero",
+                    isActive: true,
+                });
+
+                res.status(201).json({
+                    success: true,
+                    message: "Hero banner added successfully",
+                    heroBanner,
+                });
+            }
+        );
+
+        // ✅ Pipe buffer to Cloudinary
+        streamifier.createReadStream(imageFile.buffer).pipe(uploadStream);
     } catch (error) {
-        console.error('Error updating hero banner:', error);
-        res.status(500).json({ message: 'Server error while updating hero banner' });
+        console.error("Error adding hero banner:", error);
+        res.status(500).json({ message: "Server error while adding hero banner" });
     }
 }
+
+
+// // updateHeroBanner function
+// const addHeroBanner = asyncHandler(async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ success: false, message: "No file uploaded" });
+//   }
+
+//   const stream = cloudinary.uploader.upload_stream(
+//     {
+//       folder: "hero_banners",
+//       resource_type: "image",
+//       transformation: [
+//         { quality: "auto", fetch_format: "auto" }, // ✅ Cloudinary optimization
+//       ],
+//     },
+//     async (error, result) => {
+//       if (error) {
+//         return res.status(500).json({ success: false, message: error.message });
+//       }
+
+//       const newBanner = await HeroBanner.create({
+//         title: req.body.title,
+//         subtitle: req.body.subtitle,
+//         description: req.body.description,
+//         image: result.secure_url,
+//         url: req.body.url,
+//       });
+
+//       res.status(201).json({ success: true, data: newBanner });
+//     }
+//   );
+
+//   stream.end(req.file.buffer);
+// });
+const updateHeroBanner = (async (req, res) => {
+    const banner = await HeroBanner.findById(req.params.id);
+
+    if (!banner) {
+        return res.status(404).json({ success: false, message: "Banner not found" });
+    }
+
+    if (req.file) {
+        // upload new image to Cloudinary
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: "hero_banners",
+                resource_type: "image",
+                transformation: [
+                    { quality: "auto", fetch_format: "auto" },
+                ],
+            },
+            async (error, result) => {
+                if (error) {
+                    return res.status(500).json({ success: false, message: error.message });
+                }
+
+                banner.image = result.secure_url;
+                banner.title = req.body.title || banner.title;
+                banner.subtitle = req.body.subtitle || banner.subtitle;
+                banner.description = req.body.description || banner.description;
+                banner.url = req.body.url || banner.url;
+
+                await banner.save();
+
+                res.json({ success: true, data: banner });
+            }
+        );
+
+        stream.end(req.file.buffer);
+    } else {
+        // no new image, update text only
+        banner.title = req.body.title || banner.title;
+        banner.subtitle = req.body.subtitle || banner.subtitle;
+        banner.description = req.body.description || banner.description;
+        banner.url = req.body.url || banner.url;
+
+        await banner.save();
+
+        res.json({ success: true, data: banner });
+    }
+});
+
 
 // deleteHeroBanner function
 async function deleteHeroBanner(req, res) {
