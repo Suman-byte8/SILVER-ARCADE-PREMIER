@@ -157,7 +157,7 @@ const AdminBannerPreview = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {banners.map((banner, i) => (
-          <div key={banner.id || i} className="bg-white rounded-lg shadow p-4">
+          <div key={banner._id || i} className="bg-white rounded-lg shadow p-4">
             <img
               src={banner.image}
               alt={banner.title}
@@ -174,7 +174,7 @@ const AdminBannerPreview = () => {
               </button>
               <button
                 className="text-red-500 flex items-center"
-                onClick={() => handleDelete(banner.id)}
+                onClick={() => handleDelete(banner._id)}
               >
                 <FaTrash className="mr-1" /> Delete Banner
               </button>
