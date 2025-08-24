@@ -1,16 +1,10 @@
+// src/pages/PageManagement/Distinctive/DescLayout.jsx
 import React from "react";
 import Slider from "../../Carousel/Slider";
 import FullLogo from "../../Home/FullLogo";
 
 const DescLayout = ({ desc, isAdminPreview = false }) => {
   if (!desc) return null;
-
-  // For admin preview, we adjust the layout to be more compact
-  // in DescLayout.jsx
-
-  const containerClasses = isAdminPreview
-    ? "w-full flex flex-col md:flex-row items-center gap-6 border rounded-lg p-4 bg-gray-50"
-    : "w-full flex flex-col-reverse md:flex-row items-center gap-8";
 
   const contentClasses = isAdminPreview
     ? "md:w-[55%] w-full p-3 flex flex-col items-center justify-center gap-3"
@@ -29,8 +23,8 @@ const DescLayout = ({ desc, isAdminPreview = false }) => {
     : "px-10 py-2 border-2 border-gray-300 rounded-full text-gray-700 hover:border-gray-500 transition";
 
   return (
-    <div className="flex justify-center max-w-[50rem]">
-      {/* Left Content */}
+    <div className="w-full flex flex-col md:flex-row items-center gap-6 max-w-[50rem]">
+      {/* Left Text */}
       <div className={contentClasses}>
         <FullLogo isFlex={false} classes={isAdminPreview ? "text-xs" : ""} />
         <p className={textClasses}>{desc.description || desc.desc}</p>
@@ -40,7 +34,7 @@ const DescLayout = ({ desc, isAdminPreview = false }) => {
       {/* Right Image/Slider */}
       <div className={imageContainerClasses}>
         <div className="flex items-center justify-center h-full">
-          {desc.images?.length > 1 ? (
+          {Array.isArray(desc.images) && desc.images.length > 1 ? (
             <Slider
               slides={desc.images.map((img) => ({
                 content: (
@@ -54,7 +48,7 @@ const DescLayout = ({ desc, isAdminPreview = false }) => {
               showDetails={false}
               classes={isAdminPreview ? "rounded-lg" : "rounded-xl"}
             />
-          ) : desc.images?.length === 1 ? (
+          ) : Array.isArray(desc.images) && desc.images.length === 1 ? (
             <img
               src={desc.images[0]}
               alt={desc.title}
