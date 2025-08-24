@@ -60,4 +60,19 @@ router.delete('/delete-nav-link/:id', protect, authorize('admin'), deleteNavLink
 // Get Nav Links
 router.get('/get-nav-links', protect, getNavLinks);
 
+// routes for distinctive features
+const { addDistinctive, getDistinctives, updateDistinctive, deleteDistinctive } = require('../../controllers/Dynamic Content/Home Page Controller/distinctive.controller');
+
+// Create
+router.post("/add-distinctive", protect, authorize("admin"), upload.array("images"), addDistinctive);
+
+// Get all
+router.get("/distinctives", getDistinctives);
+
+// Update
+router.put("/distinctive/:id", protect, authorize("admin"), updateDistinctive);
+
+// Delete
+router.delete("/distinctive/:id", protect, authorize("admin"), deleteDistinctive);
+
 module.exports = router;

@@ -49,6 +49,7 @@ const Carousel = () => {
             },
           }));
           setSlides(formattedSlides);
+          console.log(slides);
         }
       })
       .catch((err) => {

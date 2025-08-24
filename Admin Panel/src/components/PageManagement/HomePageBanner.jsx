@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { FaRegEye } from "react-icons/fa";
 import imageCompression from "browser-image-compression";
 import { addHeroBanner } from "../../services/pageManagementApi";
 
@@ -10,10 +10,29 @@ const HomePageBanner = () => {
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    // Clean up preview URL when component unmounts or when a new file is selected
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    // Revoke previous preview URL if exists
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    // Create preview URL
+    const preview = URL.createObjectURL(selectedFile);
+    setPreviewUrl(preview);
 
     const options = {
       maxSizeMB: 2,
@@ -22,11 +41,11 @@ const HomePageBanner = () => {
     };
 
     try {
-      const compressedFile = await imageCompression(file, options);
+      const compressedFile = await imageCompression(selectedFile, options);
 
       // convert Blob -> File so multer detects it
-      const newFile = new File([compressedFile], file.name, {
-        type: file.type,
+      const newFile = new File([compressedFile], selectedFile.name, {
+        type: selectedFile.type,
       });
 
       setFile(newFile);
@@ -40,7 +59,9 @@ const HomePageBanner = () => {
 
     // Client-side validation
     if (!title || !description || !url || !file) {
-      console.error("All fields are required. Please fill in all text fields and select a file.");
+      console.error(
+        "All fields are required. Please fill in all text fields and select a file."
+      );
       return;
     }
 
@@ -65,9 +86,17 @@ const HomePageBanner = () => {
       await addHeroBanner(formData, token);
 
       console.log("Hero banner added successfully!");
+      // Revoke preview URL and reset state
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
       setHeadline("");
       setSubHeadline("");
+      setTitle("");
+      setDescription("");
+      setUrl("");
       setFile(null);
+      setPreviewUrl(null);
     } catch (error) {
       console.error(
         "Failed to add hero banner:",
@@ -78,18 +107,16 @@ const HomePageBanner = () => {
   return (
     <div>
       {" "}
-      {/* Page Title */}
-      <h1 className="text-3xl font-semibold text-gray-800 mb-2">
-        Page Management
-      </h1>
-      <p className="text-gray-500 mb-8">
-        Manage the content and images for your main website.
-      </p>
       {/* Home Page Banner Section */}
       <div className="bg-white rounded-2xl shadow p-6 mb-10">
-        <h2 className="text-xl font-medium text-gray-700 mb-4">
-          Home Page Banner Section
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-medium text-gray-700 mb-4">
+            Home Page Banner Section
+          </h2>
+            <span className="flex items-center gap-2 text-blue-500 cursor-pointer">
+              <FaRegEye /> Preview
+            </span>
+        </div>
 
         <form onSubmit={handleSaveChanges} className="space-y-6">
           {/* Upload File */}
@@ -100,11 +127,27 @@ const HomePageBanner = () => {
                 className="hidden"
                 onChange={handleFileChange}
               />
-              <div className="text-gray-500">
-                <span className="text-blue-500">Upload a file</span> or Drag and
-                Drop
-                <p className="text-xs mt-1">PNG, JPG, GIF up to 10MB</p>
-              </div>
+              {previewUrl ? (
+                <div className="flex flex-col items-center">
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="max-h-40 rounded-lg mb-2"
+                  />
+                  <p className="text-sm text-gray-600 mt-2">
+                    Selected: {file?.name}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Click to change image
+                  </p>
+                </div>
+              ) : (
+                <div className="text-gray-500">
+                  <span className="text-blue-500">Upload a file</span> or Drag and
+                  Drop
+                  <p className="text-xs mt-1">PNG, JPG, GIF up to 10MB</p>
+                </div>
+              )}
             </label>
           </div>
 
@@ -125,7 +168,7 @@ const HomePageBanner = () => {
               className="border rounded-full px-4 py-2 focus:ring-1 focus:ring-gray-300 outline-none"
             />
           </div>
-          
+
           {/* URL and Subheadline */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input

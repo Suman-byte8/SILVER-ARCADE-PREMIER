@@ -34,7 +34,7 @@ async function addHeroBanner(req, res) {
             title,
             subtitle,
             description,
-            image: result.secure_url, // 👈 Cloudinary hosted URL
+            image: result.secure_url, 
             url,
             page: "home",
             section: "hero",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
@@ -10,6 +10,12 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { Img } from "react-image";
 
 const Slider = ({ slides, showDetails, classes }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleSlideChange = (swiper) => {
+    setActiveIndex(swiper.realIndex);
+  };
+
   return (
     <div className={`relative w-full h-full ${classes}`}>
       <Swiper
@@ -17,14 +23,12 @@ const Slider = ({ slides, showDetails, classes }) => {
         spaceBetween={0}
         slidesPerView={1}
         loop={true}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
+        autoplay={true}
         navigation={{
           prevEl: '.custom-prev',
           nextEl: '.custom-next',
         }}
+        onSlideChange={handleSlideChange}
         className="h-full w-full"
       >
         {slides.map((slide, index) => (
@@ -40,11 +44,11 @@ const Slider = ({ slides, showDetails, classes }) => {
         ))}
       </Swiper>
 
-      {showDetails && slides[0] && (
+      {showDetails && slides[activeIndex] && (
         <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 md:left-20 md:top-1/2 md:-translate-y-1/2 md:translate-x-0 z-50">
           <Details
-            title={slides[0].details.title}
-            description={slides[0].details.description}
+            title={slides[activeIndex].details.title}
+            description={slides[activeIndex].details.description}
           />
         </div>
       )}
