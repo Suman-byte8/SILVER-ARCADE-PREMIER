@@ -16,6 +16,8 @@ import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
 import PageManagement from "./pages/PageManagement";
 import AdminBannerPreview from "./components/PageManagement/AdminBannerPreview";
 import AdminDistinctivePreview from "./components/PageManagement/AdminDistinctivePreview";
+import OfferManagement from "./pages/OfferManagement";
+import AddOfferPage from "./pages/AddOfferPage";
 
 const MainLayout = ({ children }) => (
   <div className="flex h-screen bg-page dark:bg-page">
@@ -44,12 +46,38 @@ const App = () => {
 
         {/* Protected routes */}
         <Route path="/" element={renderWithLayout(Home)} />
-        <Route path="/room-management" element={renderWithLayout(RoomManagement)} />
-        <Route path="/room-management/edit-room" element={renderWithLayout(EditRoomPage)} />
-        <Route path="/menu-management" element={renderWithLayout(MenuManagement)} />
-        <Route path="/page-management" element={renderWithLayout(PageManagement)} />
-        <Route path="/page-management/home-banner-preview" element={renderWithLayout(AdminBannerPreview)} />
-        <Route path="/page-management/distinctive-preview" element={renderWithLayout(AdminDistinctivePreview)} />
+        <Route
+          path="/room-management"
+          element={renderWithLayout(RoomManagement)}
+        />
+        <Route
+          path="/room-management/edit-room"
+          element={renderWithLayout(EditRoomPage)}
+        />
+        <Route
+          path="/menu-management"
+          element={renderWithLayout(MenuManagement)}
+        />
+        <Route
+          path="/page-management"
+          element={renderWithLayout(PageManagement)}
+        />
+        <Route
+          path="/page-management/home-banner-preview"
+          element={renderWithLayout(AdminBannerPreview)}
+        />
+        <Route
+          path="/page-management/distinctive-preview"
+          element={renderWithLayout(AdminDistinctivePreview)}
+        />
+        <Route
+          path="/offer-management"
+          element={renderWithLayout(OfferManagement)}
+        />
+        <Route
+          path="/offer-management/add-offer"
+          element={renderWithLayout(AddOfferPage)}
+        />
       </Routes>
     </BrowserRouter>
   );

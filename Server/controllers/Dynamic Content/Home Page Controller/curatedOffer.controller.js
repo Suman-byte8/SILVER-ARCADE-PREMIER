@@ -6,10 +6,25 @@ const CuratedOffer = require('../../../schema/Client Content Models/Home/Curated
 // Add Curated Offers
 async function addOffers(req, res) {
     try {
-        const { title, description, page, section, path } = req.body;
+        const { title, description, details, page, section, path } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ message: 'Image file is required' });
+        }
+
+        // Parse details from string to array if it's a string
+        let detailsArray = [];
+        if (details) {
+            if (typeof details === 'string') {
+                try {
+                    detailsArray = JSON.parse(details);
+                } catch (e) {
+                    // If it's not valid JSON, treat it as a single item array
+                    detailsArray = [details];
+                }
+            } else if (Array.isArray(details)) {
+                detailsArray = details;
+            }
         }
 
         // Upload image to Cloudinary
@@ -31,6 +46,7 @@ async function addOffers(req, res) {
         const newOffer = new CuratedOffer({
             title,
             description,
+            details: detailsArray,
             image: uploadResult.secure_url,
             page,
             section,
@@ -55,8 +71,24 @@ async function addOffers(req, res) {
 async function updateOffers(req, res) {
     try {
         const { id } = req.params;
-        const { title, description, page, section, path } = req.body;
-        const updateData = { title, description, page, section, path };
+        const { title, description, details, page, section, path } = req.body;
+        
+        // Parse details from string to array if it's a string
+        let detailsArray = [];
+        if (details) {
+            if (typeof details === 'string') {
+                try {
+                    detailsArray = JSON.parse(details);
+                } catch (e) {
+                    // If it's not valid JSON, treat it as a single item array
+                    detailsArray = [details];
+                }
+            } else if (Array.isArray(details)) {
+                detailsArray = details;
+            }
+        }
+
+        const updateData = { title, description, details: detailsArray, page, section, path };
         if (req.file) {
             // Upload new image to Cloudinary
             const streamUpload = (req) => {
