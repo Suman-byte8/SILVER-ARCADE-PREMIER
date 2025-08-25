@@ -10,8 +10,9 @@ import {
 } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
 import { BiSolidOffer } from "react-icons/bi";
-import { RiReservedFill } from "react-icons/ri";
+import { RiReservedFill, RiServiceFill } from "react-icons/ri";
 import { IoIosPeople, IoMdSettings } from "react-icons/io";
+// import { RiServiceFill } from "react-icons/ri";
 
 export default function Sidebar() {
   const ref = useRef(null);
@@ -70,6 +71,14 @@ export default function Sidebar() {
             <span className="">Offers</span>
           </Link>
         </li>
+
+        <li>
+          <Link to="/facility-management" className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer gap-2">
+            < RiServiceFill />
+            <span className="">Facilities</span>
+          </Link>
+        </li>
+
 
         <li>
           <Link to="/reservations" className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer gap-2">

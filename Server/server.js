@@ -23,11 +23,17 @@ const userRoutes = require('./routes/user.route');
 const adminRoutes = require('./routes/admin.route');
 // Home page content management routes
 const homeRoutes = require('./routes/Content Change Routes/home.route');
+// Room management routes
+const roomsRoutes = require('./schema/Client Content Models/Room Management/rooms.route');
+// Facilities routes
+const facilitiesRoutes = require('./routes/Content Change Routes/facilities.route');
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/content/home', homeRoutes);
+app.use('/api/rooms', roomsRoutes);
+app.use('/api/facilities', facilitiesRoutes);
 // app.use('api/admin/content/about-us', aboutRoutes)
 
 // Start the server

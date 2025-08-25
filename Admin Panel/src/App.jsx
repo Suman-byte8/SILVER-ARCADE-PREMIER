@@ -6,8 +6,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Auth/Login";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import Signup from "./pages/Auth/Signup";
-import RoomManagement from "./pages/RoomManagementPage/RoomManagement";
-import EditRoomPage from "./pages/RoomManagementPage/EditRoomPage"; // new import
+import RoomManagement from "./pages/RoomManagement";
+import EditRoomPage from "./components/RoomManagement/EditRoomPage"; // new import
 
 // Layouts
 import Sidebar from "./components/Sidebar";
@@ -18,6 +18,7 @@ import AdminBannerPreview from "./components/PageManagement/AdminBannerPreview";
 import AdminDistinctivePreview from "./components/PageManagement/AdminDistinctivePreview";
 import OfferManagement from "./pages/OfferManagement";
 import AddOfferPage from "./pages/AddOfferPage";
+import FacilityManagement from "./pages/FacilityManagement";
 
 const MainLayout = ({ children }) => (
   <div className="flex h-screen bg-page dark:bg-page">
@@ -77,6 +78,10 @@ const App = () => {
         <Route
           path="/offer-management/add-offer"
           element={renderWithLayout(AddOfferPage)}
+        />
+         <Route
+          path="/facility-management"
+          element={renderWithLayout(FacilityManagement)}
         />
       </Routes>
     </BrowserRouter>
