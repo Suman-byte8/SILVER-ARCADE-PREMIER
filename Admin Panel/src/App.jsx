@@ -12,7 +12,7 @@ import EditRoomPage from "./components/RoomManagement/EditRoomPage"; // new impo
 // Layouts
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
-import MenuManagement from "./pages/MenuManagementPage/MenuManagement";
+import MenuManagement from "./pages/MenuManagement";
 import PageManagement from "./pages/PageManagement";
 import AdminBannerPreview from "./components/PageManagement/AdminBannerPreview";
 import AdminDistinctivePreview from "./components/PageManagement/AdminDistinctivePreview";

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FaPowerOff, FaPager } from "react-icons/fa";
+import { FaPowerOff, FaPager, FaAngleDoubleUp } from "react-icons/fa";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import {
   MdMeetingRoom,
@@ -59,9 +59,9 @@ export default function Sidebar() {
         </li>
 
         <li>
-          <Link to="/customer-management" className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer gap-2">
-            <FaUserFriends />
-            <span className="">Customer Management</span>
+          <Link to="/about-management" className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer gap-2">
+            <FaAngleDoubleUp />
+            <span className="">About Management</span>
           </Link>
         </li>
 

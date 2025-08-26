@@ -1,6 +1,6 @@
-import AboutPage from '../../../schema/Client Content Models/About/about.model.js';
-import cloudinary from '../../../config/cloudinary.js';
-import streamifier from 'streamifier';
+const AboutPage = require("../../../schema/Client Content Models/About/about.model.js")
+const cloudinary = require('../../../config/cloudinary.js');
+const streamifier = require('streamifier');
 
 // --- Cloudinary Upload Helper ---
 
@@ -36,7 +36,7 @@ const uploadToCloudinary = (fileBuffer) => {
  * @route GET /api/about
  * @access Public
  */
-export const getAboutPage = async (req, res) => {
+const getAboutPage = async (req, res) => {
   try {
     let aboutPage = await AboutPage.findOne();
     if (!aboutPage) {
@@ -61,7 +61,7 @@ export const getAboutPage = async (req, res) => {
  * @route PUT /api/about/about-us
  * @access Private/Admin
  */
-export const updateAboutUsSection = async (req, res) => {
+const updateAboutUsSection = async (req, res) => {
   try {
     const { title, description } = req.body;
     const aboutPage = await AboutPage.findOne();
@@ -189,16 +189,30 @@ const deleteItem = (itemName, sectionName) => async (req, res) => {
 };
 
 // --- Content Block Controllers ---
-export const addContentBlock = addItem('Content Block', 'contentBlocks');
-export const updateContentBlock = updateItem('Content Block', 'contentBlocks');
-export const deleteContentBlock = deleteItem('Content Block', 'contentBlocks');
+const addContentBlock = addItem('Content Block', 'contentBlocks');
+const updateContentBlock = updateItem('Content Block', 'contentBlocks');
+const deleteContentBlock = deleteItem('Content Block', 'contentBlocks');
 
 // --- Amenity Controllers ---
-export const addAmenity = addItem('Amenity', 'amenities');
-export const updateAmenity = updateItem('Amenity', 'amenities');
-export const deleteAmenity = deleteItem('Amenity', 'amenities');
+const addAmenity = addItem('Amenity', 'amenities');
+const updateAmenity = updateItem('Amenity', 'amenities');
+const deleteAmenity = deleteItem('Amenity', 'amenities');
 
 // --- Service Controllers ---
-export const addService = addItem('Service', 'services');
-export const updateService = updateItem('Service', 'services');
-export const deleteService = deleteItem('Service', 'services');
+const addService = addItem('Service', 'services');
+const updateService = updateItem('Service', 'services');
+const deleteService = deleteItem('Service', 'services');
+
+module.exports = {
+  getAboutPage,
+  updateAboutUsSection,
+  addContentBlock,
+  updateContentBlock,
+  deleteContentBlock,
+  addAmenity,
+  updateAmenity,
+  deleteAmenity,
+  addService,
+  updateService,
+  deleteService
+};
