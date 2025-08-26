@@ -44,7 +44,7 @@ const AmenityCard = ({ _id, title, imageUrl, alt, description, onDelete, onUpdat
 
   return (
     <div className="border border-gray-300 p-4 rounded-lg relative">
-      <div className="absolute top-2 right-2 flex space-x-2">
+      <div className="absolute top-2 right-2  flex space-x-2 ">
         <button
           onClick={() => setIsEditing(!isEditing)}
           className="bg-blue-600 text-white p-1 rounded text-xs hover:bg-blue-700 transition-colors"
@@ -61,16 +61,22 @@ const AmenityCard = ({ _id, title, imageUrl, alt, description, onDelete, onUpdat
         </button>
       </div>
 
-      <h3 className="font-bold text-lg mb-2">{title}</h3>
+      <h3 className="font-bold text-lg mb-2 mt-4">{title}</h3>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-600">Image</label>
           <div className="mt-1 flex items-center flex-col">
-            <img
-              alt={alt}
-              className="w-full h-32 object-cover rounded-md mb-2"
-              src={imageUrl}
-            />
+            {imageUrl ? (
+              <img
+                alt={alt}
+                className="w-full h-32 object-cover rounded-md mb-2"
+                src={imageUrl}
+              />
+            ) : (
+              <div className="w-full h-32 bg-gray-200 rounded-md mb-2 flex items-center justify-center text-gray-500 text-sm">
+                No Image
+              </div>
+            )}
             <input
               className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               type="file"

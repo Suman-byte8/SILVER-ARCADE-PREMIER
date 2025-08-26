@@ -179,7 +179,7 @@ const deleteItem = (itemName, sectionName) => async (req, res) => {
       await cloudinary.uploader.destroy(item.image.public_id);
     }
 
-    item.remove();
+    aboutPage[sectionName].pull(id);
     await aboutPage.save();
     res.status(200).json({ message: `${itemName} deleted successfully` });
   } catch (error) {

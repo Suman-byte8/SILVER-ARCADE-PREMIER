@@ -76,11 +76,17 @@ const ContentBlock = ({
         <div>
           <label className="block text-sm font-medium text-gray-600">Image</label>
           <div className="mt-1 flex items-center">
-            <img
-              alt={alt}
-              className="w-40 h-20 object-cover rounded-md mr-4"
-              src={imageUrl}
-            />
+            {imageUrl ? (
+              <img
+                alt={alt}
+                className="w-40 h-20 object-cover rounded-md mr-4"
+                src={imageUrl}
+              />
+            ) : (
+              <div className="w-40 h-20 bg-gray-200 rounded-md mr-4 flex items-center justify-center text-gray-500 text-sm">
+                No Image
+              </div>
+            )}
             <input
               className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               type="file"

@@ -14,3 +14,15 @@ export const fetchAboutPage = async (token) => {
   return data;
 };
 
+// Delete Amenity
+export const deleteAmenity = async (id, token) => {
+  try {
+    const response = await axios.delete(`${API_URL}/content/about/admin/amenities/${id}`, {
+      headers: authHeader(token),
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting amenity:", error);
+    throw error;
+  }
+};

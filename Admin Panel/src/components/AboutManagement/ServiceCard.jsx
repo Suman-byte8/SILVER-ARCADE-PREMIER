@@ -29,7 +29,7 @@ const ServiceCard = ({ _id, title, imageUrl, alt, description, onDelete, onUpdat
       await aboutApi.updateService(_id, { description: editedDescription }, token);
       setIsEditing(false);
       onUpdate(_id, { description: editedDescription });
-    } catch (error) {
+      } catch (error) {
       console.error("Error updating service:", error);
       alert("Failed to update service");
     } finally {
@@ -66,11 +66,17 @@ const ServiceCard = ({ _id, title, imageUrl, alt, description, onDelete, onUpdat
         <div>
           <label className="block text-sm font-medium text-gray-600">Image</label>
           <div className="mt-1 flex items-center flex-col">
-            <img
-              alt={alt}
-              className="w-full h-32 object-cover rounded-md mb-2"
-              src={imageUrl}
-            />
+            {imageUrl ? (
+              <img
+                alt={alt}
+                className="w-full h-32 object-cover rounded-md mb-2"
+                src={imageUrl}
+              />
+            ) : (
+              <div className="w-full h-32 bg-gray-200 rounded-md mb-2 flex items-center justify-center text-gray-500 text-sm">
+                No Image
+              </div>
+            )}
             <input
               className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               type="file"
@@ -117,4 +123,4 @@ const ServiceCard = ({ _id, title, imageUrl, alt, description, onDelete, onUpdat
   );
 };
 
-export default ServiceCard
+export default ServiceCard;

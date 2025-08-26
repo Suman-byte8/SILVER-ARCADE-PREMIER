@@ -49,7 +49,7 @@ const AboutUs = () => {
       {/* Hero Section */}
       <div className="relative p-3">
         <img
-          src="https://www.itchotels.com/content/dam/itchotels/in/umbrella/miscellaneous-pages/responsible-luxury/images/headmast/desktop/nine-leed-zero-water-hotels.jpg"
+          src={aboutData?.aboutUsSection?.headerImage?.url}
           alt=""
           className="rounded-lg w-full h-64 md:h-96 object-cover"
         />
