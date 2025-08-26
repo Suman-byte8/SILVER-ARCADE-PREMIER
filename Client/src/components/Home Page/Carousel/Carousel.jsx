@@ -3,7 +3,7 @@ import Booking from "./Booking";
 import Slider from "./Slider";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { getHeroBannerData } from "../Api/HeroBanner";
+import { getHeroBannerData } from "./Api/HeroBanner";
 
 const Carousel = () => {
   const [slides, setSlides] = useState([]);

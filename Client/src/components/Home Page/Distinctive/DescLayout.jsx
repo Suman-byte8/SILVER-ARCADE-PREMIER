@@ -34,7 +34,7 @@ const DescLayout = ({ desc }) => {
       </div>
       <div className="w-full md:w-[45%] h-[65vh]">
         <div className="_img flex items-center justify-center h-full">
-          {desc.img.length > 1 ? (
+          {desc.img && desc.img.length > 1 ? (
             <Slider
               slides={desc.img.map(img => ({
                 content: renderImage(img)
@@ -42,8 +42,12 @@ const DescLayout = ({ desc }) => {
               showDetails={false}
               classes={"rounded-lg"}
             />
-          ) : (
+          ) : desc.img && desc.img.length === 1 ? (
             renderImage(desc.img[0])
+          ) : (
+            <div className="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center">
+              <p className="text-gray-500">No Image Available</p>
+            </div>
           )}
         </div>
       </div>

@@ -66,7 +66,9 @@ const Slider = ({ slides, showDetails, classes }) => {
       </Swiper>
 
       {showDetails && slides.length > 0 && slides[activeIndex] && (
-        <div className="absolute top-[50vh]  left-1/2 transform -translate-x-1/2 md:left-20 md:top-1/2 md:-translate-y-1/2 md:translate-x-0 z-50">
+        <div className="absolute top-[50vh] 
+        
+        left-1/2 transform -translate-x-1/2 md:left-20 md:top-1/2 md:-translate-y-1/2 md:translate-x-0 z-50">
           <Details
             title={slides[activeIndex].details.title}
             description={slides[activeIndex].details.description}
