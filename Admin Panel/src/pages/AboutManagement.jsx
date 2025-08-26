@@ -40,6 +40,66 @@ const AboutManagement = () => {
     setTimeout(() => setMessage(""), 3000);
   };
 
+  const handleAmenityDelete = (amenityId) => {
+    setAboutData(prevData => ({
+      ...prevData,
+      amenities: prevData.amenities.filter(amenity => amenity._id !== amenityId)
+    }));
+    setMessage("Amenity deleted successfully!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleAmenityUpdate = (amenityId, updatedData) => {
+    setAboutData(prevData => ({
+      ...prevData,
+      amenities: prevData.amenities.map(amenity => 
+        amenity._id === amenityId ? { ...amenity, ...updatedData } : amenity
+      )
+    }));
+    setMessage("Amenity updated successfully!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleServiceDelete = (serviceId) => {
+    setAboutData(prevData => ({
+      ...prevData,
+      services: prevData.services.filter(service => service._id !== serviceId)
+    }));
+    setMessage("Service deleted successfully!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleServiceUpdate = (serviceId, updatedData) => {
+    setAboutData(prevData => ({
+      ...prevData,
+      services: prevData.services.map(service => 
+        service._id === serviceId ? { ...service, ...updatedData } : service
+      )
+    }));
+    setMessage("Service updated successfully!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleContentBlockDelete = (contentBlockId) => {
+    setAboutData(prevData => ({
+      ...prevData,
+      contentBlocks: prevData.contentBlocks.filter(block => block._id !== contentBlockId)
+    }));
+    setMessage("Content block deleted successfully!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleContentBlockUpdate = (contentBlockId, updatedData) => {
+    setAboutData(prevData => ({
+      ...prevData,
+      contentBlocks: prevData.contentBlocks.map(block => 
+        block._id === contentBlockId ? { ...block, ...updatedData } : block
+      )
+    }));
+    setMessage("Content block updated successfully!");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   if (loading) {
     return (
       <div className="max-w-[1200px] mx-auto min-h-screen">
@@ -93,7 +153,12 @@ const AboutManagement = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {aboutData?.contentBlocks?.map((block, index) => (
-                <ContentBlock key={index} {...block} />
+                <ContentBlock 
+                  key={block._id || index} 
+                  {...block} 
+                  onDelete={handleContentBlockDelete}
+                  onUpdate={handleContentBlockUpdate}
+                />
               ))}
               {(!aboutData?.contentBlocks || aboutData.contentBlocks.length === 0) && (
                 <p className="text-gray-500">No content blocks available</p>
@@ -107,7 +172,12 @@ const AboutManagement = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {aboutData?.amenities?.map((amenity, index) => (
-                <AmenityCard key={index} {...amenity} />
+                <AmenityCard 
+                  key={amenity._id || index} 
+                  {...amenity} 
+                  onDelete={handleAmenityDelete}
+                  onUpdate={handleAmenityUpdate}
+                />
               ))}
               {(!aboutData?.amenities || aboutData.amenities.length === 0) && (
                 <p className="text-gray-500">No amenities available</p>
@@ -121,7 +191,12 @@ const AboutManagement = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {aboutData?.services?.map((service, index) => (
-                <ServiceCard key={index} {...service} />
+                <ServiceCard 
+                  key={service._id || index} 
+                  {...service} 
+                  onDelete={handleServiceDelete}
+                  onUpdate={handleServiceUpdate}
+                />
               ))}
               {(!aboutData?.services || aboutData.services.length === 0) && (
                 <p className="text-gray-500">No services available</p>

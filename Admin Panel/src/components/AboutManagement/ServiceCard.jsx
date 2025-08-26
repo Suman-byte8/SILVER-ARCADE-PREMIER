@@ -1,7 +1,66 @@
-import React from 'react'
+import React, { useState } from "react";
+import { aboutApi } from "../../services/aboutApi";
 
-const ServiceCard = ({ title, imageUrl, alt, description }) => (
-    <div className="border p-4 rounded-lg border-gray-300">
+const ServiceCard = ({ _id, title, imageUrl, alt, description, onDelete, onUpdate }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(description);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const token = import.meta.env.VITE_TEMP_ADMIN_TOKEN;
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this service?")) {
+      setIsLoading(true);
+      try {
+        await aboutApi.deleteService(_id, token);
+        onDelete(_id);
+      } catch (error) {
+        console.error("Error deleting service:", error);
+        alert("Failed to delete service");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleUpdate = async () => {
+    setIsLoading(true);
+    try {
+      await aboutApi.updateService(_id, { description: editedDescription }, token);
+      setIsEditing(false);
+      onUpdate(_id, { description: editedDescription });
+    } catch (error) {
+      console.error("Error updating service:", error);
+      alert("Failed to update service");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedDescription(description);
+    setIsEditing(false);
+  };
+
+  return (
+    <div className="border p-4 rounded-lg border-gray-300 relative">
+      <div className="absolute top-2 right-2 flex space-x-2">
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          className="bg-blue-600 text-white p-1 rounded text-xs hover:bg-blue-700 transition-colors"
+          disabled={isLoading}
+        >
+          {isEditing ? "Cancel" : "Edit"}
+        </button>
+        <button
+          onClick={handleDelete}
+          className="bg-red-600 text-white p-1 rounded text-xs hover:bg-red-700 transition-colors"
+          disabled={isLoading}
+        >
+          Delete
+        </button>
+      </div>
+
       <h3 className="font-bold text-lg mb-2">{title}</h3>
       <div className="space-y-4">
         <div>
@@ -22,14 +81,40 @@ const ServiceCard = ({ title, imageUrl, alt, description }) => (
           <label className="block text-sm font-medium text-gray-600">
             Description
           </label>
-          <textarea
-            className="w-full mt-1 p-2 border border-gray-300 rounded-md outline-0"
-            rows="3"
-            defaultValue={description}
-          ></textarea>
+          {isEditing ? (
+            <>
+              <textarea
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md outline-0"
+                rows="3"
+                value={editedDescription}
+                onChange={(e) => setEditedDescription(e.target.value)}
+              />
+              <div className="flex space-x-2 mt-2">
+                <button
+                  onClick={handleUpdate}
+                  className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Saving..." : "Save"}
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700 transition-colors"
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <p className="w-full mt-1 p-2 border border-gray-300 rounded-md bg-gray-50">
+              {description}
+            </p>
+          )}
         </div>
       </div>
     </div>
   );
+};
 
 export default ServiceCard

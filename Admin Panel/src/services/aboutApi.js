@@ -26,7 +26,7 @@ export const aboutApi = {
       const response = await axios.put(`${API_BASE_URL}/admin/update-about-us`, aboutUsData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          // "Content-Type": "application/json",
+          'Content-Type': 'multipart/form-data',
         },
       });
       return response.data;

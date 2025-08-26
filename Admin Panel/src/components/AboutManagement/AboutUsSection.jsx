@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { aboutApi } from "../../services/aboutApi";
 
 const AboutUsSection = () => {
   const [aboutData, setAboutData] = useState({
     title: "",
-    description: ""
+    description: "",
+    headerImage: null
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const fileInputRef = useRef(null);
 
   const token = import.meta.env.VITE_TEMP_ADMIN_TOKEN;
 
@@ -23,7 +25,8 @@ const AboutUsSection = () => {
       if (data.aboutUsSection) {
         setAboutData({
           title: data.aboutUsSection.title || "",
-          description: data.aboutUsSection.description || ""
+          description: data.aboutUsSection.description || "",
+          headerImage: data.aboutUsSection.headerImage || null
         });
       }
     } catch (error) {
@@ -41,13 +44,48 @@ const AboutUsSection = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAboutData(prev => ({
+          ...prev,
+          headerImage: {
+            url: e.target.result,
+            file: file,
+            isNew: true
+          }
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setAboutData(prev => ({
+      ...prev,
+      headerImage: null
+    }));
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
       setMessage("");
-      await aboutApi.updateAboutUs(aboutData, token);
+      
+      const formData = new FormData();
+      formData.append('title', aboutData.title);
+      formData.append('description', aboutData.description);
+      
+      if (aboutData.headerImage && aboutData.headerImage.file) {
+        formData.append('headerImage', aboutData.headerImage.file);
+      }
+
+      await aboutApi.updateAboutUs(formData, token);
       setMessage("About Us section updated successfully!");
       setTimeout(() => setMessage(""), 3000);
+      fetchAboutData(); // Refresh data to get the actual image URL from server
     } catch (error) {
       console.error("Error updating About Us:", error);
       setMessage("Failed to update About Us section");
@@ -97,6 +135,45 @@ const AboutUsSection = () => {
       )}
 
       <div className="space-y-4">
+        {/* Header Image Section */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-2">
+            Header Image
+          </label>
+          {aboutData.headerImage ? (
+            <div className="relative">
+              <img
+                src={aboutData.headerImage.url}
+                alt="Header preview"
+                className="w-full h-[18rem] object-cover rounded-md mb-2"
+              />
+              <button
+                onClick={handleRemoveImage}
+                className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded text-xs hover:bg-red-700 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
+              <p className="text-sm text-gray-500 mb-2">No header image selected</p>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+              >
+                Upload Image
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </div>
+          )}
+        </div>
+
         <div>
           <label
             className="block text-sm font-medium text-gray-600"
