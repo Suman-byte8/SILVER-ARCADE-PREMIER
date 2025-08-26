@@ -1,31 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Card, CardContent, Typography, CardMedia } from "@mui/material";
 
-const facilities = [
-  {
-    title: "Masala Zone",
-    subtitle: "Savor Global Flavors",
-    description:
-      "Embark on a flavor-filled journey at Masala Zone, the ultimate MultiCuisine Restaurant that tantalizes taste buds with a diverse range of global flavors. Indulge in culinary adventures at our vibrant and lively establishment, where open kitchen concept meets vibrant decor. From exotic cocktails to Chef's Special Paneer Tikka and Avocado Toast, our menu is a true extravaganza. Discover the world on your plate, only at Masala Zone.",
-    image: "https://www.silverarcadepremier.com/images/blog1.jpg",
-  },
-  {
-    title: "NH-16",
-    subtitle: "Savor Global Flavors",
-    description:
-      "Embark on a flavor-filled journey at NH-16, the ultimate MultiCuisine Restaurant that tantalizes taste buds with a diverse range of global flavors. Indulge in culinary adventures at our vibrant and lively establishment, where open kitchen concept meets vibrant decor. From exotic cocktails to Chef's Special Paneer Tikka and Avocado Toast, our menu is a true extravaganza. Discover the world on your plate, only at NH-16.",
-    image: "https://www.silverarcadepremier.com/images/blog2.jpg",
-  },
-  {
-    title: "Masala Zone",
-    subtitle: "Savor Global Flavors",
-    description:
-      "Embark on a flavor-filled journey at Masala Zone, the ultimate MultiCuisine Restaurant that tantalizes taste buds with a diverse range of global flavors. Indulge in culinary adventures at our vibrant and lively establishment, where open kitchen concept meets vibrant decor. From exotic cocktails to Chef's Special Paneer Tikka and Avocado Toast, our menu is a true extravaganza. Discover the world on your plate, only at Masala Zone.",
-    image: "https://www.silverarcadepremier.com/images/blog3.jpg",
-  },
-];
-
 export default function OurFacilities() {
+  const [facilities, setFacilities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/facilities/get-facilities",{
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_TEMP_TOKEN}`
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          setFacilities(data.facilities);
+        } else {
+          setError("Failed to fetch facilities");
+        }
+      } catch (err) {
+        setError("Error fetching facilities");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFacilities();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
   return (
     <Container sx={{ py: 8 }}>
       <h1 className="text-4xl font-light tracking-wide text-center mb-8 uppercase">Our Facilities</h1>

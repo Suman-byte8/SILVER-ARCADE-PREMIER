@@ -1,43 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import RoomCard from "../components/Our Rooms/RoomCard";
 import AddInfo from "../components/Our Rooms/AddInfo";
 import { CiSearch } from "react-icons/ci";
 
-// local image for rooms
-import deluxeRoomImg from "../assets/Rooms/deluxe.jpg";
-import executiveDeluxeRoomImg from "../assets/Rooms/executive_deluxe.jpg";
-import suiteRoomImg from "../assets/Rooms/suite.jpg";
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
-const rooms = [
-  {
-    name: "Deluxe Room",
-    description: "Spacious deluxe room with king-size bed and city views.",
-    type: "deluxe",
-    image: deluxeRoomImg,
-  },
-  {
-    name: "Executive Deluxe Room",
-    description: "Perfect for two guests with modern amenities.",
-    type: "executive deluxe",
-    image: executiveDeluxeRoomImg,
-  },
-  {
-    name: "Suite",
-    description: "Luxurious suite with living area and premium facilities.",
-    type: "suite",
-    image: suiteRoomImg,
-  },
-];
+// Default room image (using one of the existing images as fallback)
+import defaultRoomImg from "../assets/Rooms/deluxe.jpg";
+
 
 const OurRooms = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const token = import.meta.env.VITE_TEMP_TOKEN
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/rooms/get-rooms`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        // Transform the API data to match RoomCard component expectations
+        const transformedRooms = response.data.rooms.map(room => ({
+          ...room,
+          name: room.roomName,
+          description: room.roomDescription,
+          image: room.heroImage || (room.roomImages && room.roomImages.length > 0 ? room.roomImages[0].url : defaultRoomImg)
+        }));
+        
+        setRooms(transformedRooms);
+      } catch (err) {
+        setError("Failed to fetch rooms");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, []);
 
   const filteredRooms = rooms.filter((room) => {
     const matchesSearch =
-      room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === "all" || room.type === filterType;
+      room.roomName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      room.roomDescription.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterType === "all" || room.roomType === filterType;
     return matchesSearch && matchesFilter;
   });
 
@@ -69,24 +80,29 @@ const OurRooms = () => {
           className="border border-gray-300 rounded-full px-4 py-2 w-full sm:w-auto"
         >
           <option value="all">All Types</option>
-          <option value="deluxe">Deluxe</option>
-          <option value="executive deluxe">Executive Deluxe</option>
-          <option value="single">Single</option>
-          <option value="suite">Suite</option>
+          <option value="Deluxe Room">Deluxe</option>
+          <option value="Executive Deluxe Room">Executive Deluxe</option>
+          <option value="Suite">Suite</option>
         </select>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 mt-10">
         <h2 className="text-xl font-semibold mb-6">Available Rooms</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredRooms.length > 0 ? (
-            filteredRooms.map((room, index) => (
-              <RoomCard key={index} room={room} />
-            ))
-          ) : (
-            <p className="text-gray-500">No rooms match your search.</p>
-          )}
-        </div>
+        {loading ? (
+          <p>Loading rooms...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredRooms.length > 0 ? (
+              filteredRooms.map((room, index) => (
+                <RoomCard key={index} room={room} />
+              ))
+            ) : (
+              <p className="text-gray-500">No rooms match your search.</p>
+            )}
+          </div>
+        )}
       </div>
 
       <AddInfo />
