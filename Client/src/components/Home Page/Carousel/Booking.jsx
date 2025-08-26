@@ -18,7 +18,7 @@ const Booking = () => {
         getCurrentDate();
     }, []);
   return (
-    <div className="w-full max-w-4xl  p-2 md:bg-transparent">
+    <div className="w-full max-w-4xl  p-2 md:bg-transparent border border-gray-300 rounded-lg">
       <Link to="/reservation" className="w-full bg-white/10 backdrop-blur-md  flex items-center justify-between p-5 md:p-3 rounded-lg border-[1px] border-gray-500 md:border-0">
         <div className="_search flex items-center">
           <FaSearch className=" mr-2" />

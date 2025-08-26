@@ -2,11 +2,13 @@ import React from 'react'
 
 const Details = ({ title, description }) => {
   return (
-    <div className="_subDetails min-w-[250px] max-w-[300px] min-h-[180px] max-h-[200px] bg-white p-4 text-center flex flex-col items-center justify-center rounded-lg shadow-lg gap-3 z-50">
-    <h2 className="text-xl">{title}</h2>
-    <p className="text-sm">{description}</p>
-    <button className='border-2 border-gray-300 rounded-full px-3 py-1 mt-2'>Know More</button>
-  </div>
+    <div className="_subDetails min-w-[200px] max-w-[280px] sm:min-w-[250px] sm:max-w-[300px] min-h-[150px] sm:min-h-[180px] bg-white p-3 sm:p-4 text-center flex flex-col items-center justify-center rounded-lg shadow-lg gap-2 sm:gap-3 z-50">
+      <h2 className="text-lg sm:text-xl font-medium">{title}</h2>
+      <p className="text-xs sm:text-sm text-gray-600">{description}</p>
+      <button className='border-2 border-gray-300 rounded-full px-3 py-1 mt-2 text-xs sm:text-sm hover:bg-gray-50 transition-colors'>
+        Know More
+      </button>
+    </div>
   )
 }
 
