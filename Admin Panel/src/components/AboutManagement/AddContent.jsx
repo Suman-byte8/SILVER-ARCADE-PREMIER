@@ -33,9 +33,9 @@ const token = import.meta.env.VITE_TEMP_ADMIN_TOKEN;
       if (type === "content") {
         await aboutApi.addContentBlock(formData, token);
       } else if (type === "amenity") {
-        await aboutApi.addAmenity(formData);
+        await aboutApi.addAmenity(formData, token);
       } else if (type === "service") {
-        await aboutApi.addService(formData);
+        await aboutApi.addService(formData, token);
       }
       setMessage("Item added successfully!");
       onContentAdded();

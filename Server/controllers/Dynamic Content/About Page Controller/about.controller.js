@@ -1,6 +1,35 @@
 import AboutPage from '../../../schema/Client Content Models/About/about.model.js';
+import cloudinary from '../../../config/cloudinary.js';
+import streamifier from 'streamifier';
 
-// Note: Error handling is basic. In a production environment, you might want more sophisticated logging or error handling.
+// --- Cloudinary Upload Helper ---
+
+/**
+ * @description A helper function to upload a file buffer to Cloudinary as a stream.
+ * @param {Buffer} fileBuffer The buffer of the file to upload.
+ * @returns {Promise<object>} A promise that resolves with the Cloudinary upload result.
+ */
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'silver-arcade-premier-about',
+        // Optional: Add transformations for optimization
+        transformation: [{ width: 1024, crop: 'limit' }, { quality: 'auto' }],
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
+};
+
 
 /**
  * @description Get the entire About Page content. If it doesn't exist, create it with default values.
@@ -20,6 +49,7 @@ export const getAboutPage = async (req, res) => {
     }
     res.status(200).json(aboutPage);
   } catch (error) {
+    console.error('Error fetching About Page content:', error);
     res.status(500).json({ message: 'Error fetching About Page content', error: error.message });
   }
 };
@@ -43,92 +73,32 @@ export const updateAboutUsSection = async (req, res) => {
     if (description) aboutPage.aboutUsSection.description = description;
 
     if (req.file) {
-      // TODO: Delete old image from Cloudinary if it exists
+      if (aboutPage.aboutUsSection.headerImage && aboutPage.aboutUsSection.headerImage.public_id) {
+        await cloudinary.uploader.destroy(aboutPage.aboutUsSection.headerImage.public_id);
+      }
+      const uploadResult = await uploadToCloudinary(req.file.buffer);
       aboutPage.aboutUsSection.headerImage = {
-        url: req.file.path,
-        public_id: req.file.filename,
+        url: uploadResult.secure_url,
+        public_id: uploadResult.public_id,
       };
     }
 
     await aboutPage.save();
     res.status(200).json(aboutPage.aboutUsSection);
   } catch (error) {
+    console.error('Error updating About Us section:', error);
     res.status(500).json({ message: 'Error updating About Us section', error: error.message });
   }
 };
 
 // --- Generic CRUD Functions for Sub-documents ---
 
-const addItem = (itemName) => async (req, res) => {
+const addItem = (itemName, sectionName) => async (req, res) => {
   const { title, description } = req.body;
-  const section = `${itemName.toLowerCase()}s`; // e.g., contentBlocks, amenities, services
 
-  try {
-    // Validate required fields
-    if (!title || !description) {
-      return res.status(400).json({ 
-        message: `Missing required fields for ${itemName}`,
-        required: ['title', 'description']
-      });
-    }
-
-    // Find or create AboutPage document
-    let aboutPage = await AboutPage.findOne();
-    if (!aboutPage) {
-      aboutPage = await AboutPage.create({
-        aboutUsSection: {
-          title: 'About Us',
-          description: 'Welcome to our about page!',
-        },
-        contentBlocks: [],
-        amenities: [],
-        services: []
-      });
-    }
-
-    // Ensure the section array exists and is properly initialized
-    if (!aboutPage[section]) {
-      aboutPage[section] = [];
-    }
-
-    const newItem = { title, description };
-    if (req.file) {
-      newItem.image = {
-        url: req.file.path,
-        public_id: req.file.filename,
-      };
-    }
-
-    console.log('Adding new item:', newItem);
-    
-    // Ensure the section array exists
-    if (!aboutPage[section]) {
-      aboutPage[section] = [];
-    }
-    
-    // Push the new item to the array and save the document
-    aboutPage[section].push(newItem);
-    await aboutPage.save();
-    
-    console.log('About Page after addition:', aboutPage);
-    
-    // Return the newly added item directly from the saved document
-    const savedItem = aboutPage[section][aboutPage[section].length - 1];
-    res.status(201).json(savedItem);
-  } catch (error) {
-    console.error(`Error adding ${itemName}:`, error);
-    res.status(500).json({ 
-      message: `Error adding ${itemName}`,
-      error: error.message,
-      details: error.stack 
-    });
+  if (!title || !description) {
+    return res.status(400).json({ message: `Title and description are required for ${itemName}` });
   }
-};
-
-const updateItem = (itemName) => async (req, res) => {
-  const { id } = req.params;
-  const { title, description } = req.body;
-  const section = `${itemName.toLowerCase()}s`;
 
   try {
     const aboutPage = await AboutPage.findOne();
@@ -136,7 +106,35 @@ const updateItem = (itemName) => async (req, res) => {
       return res.status(404).json({ message: 'About Page not found' });
     }
 
-    const item = aboutPage[section].id(id);
+    const newItem = { title, description };
+    if (req.file) {
+      const uploadResult = await uploadToCloudinary(req.file.buffer);
+      newItem.image = {
+        url: uploadResult.secure_url,
+        public_id: uploadResult.public_id,
+      };
+    }
+
+    aboutPage[sectionName].push(newItem);
+    await aboutPage.save();
+    res.status(201).json(aboutPage[sectionName]);
+  } catch (error) {
+    console.error(`Error adding ${itemName}:`, error);
+    res.status(500).json({ message: `Error adding ${itemName}` , error: error.message });
+  }
+};
+
+const updateItem = (itemName, sectionName) => async (req, res) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+
+  try {
+    const aboutPage = await AboutPage.findOne();
+    if (!aboutPage) {
+      return res.status(404).json({ message: 'About Page not found' });
+    }
+
+    const item = aboutPage[sectionName].id(id);
     if (!item) {
       return res.status(404).json({ message: `${itemName} not found` });
     }
@@ -145,10 +143,13 @@ const updateItem = (itemName) => async (req, res) => {
     if (description) item.description = description;
 
     if (req.file) {
-      // TODO: Delete old image from Cloudinary
+      if (item.image && item.image.public_id) {
+        await cloudinary.uploader.destroy(item.image.public_id);
+      }
+      const uploadResult = await uploadToCloudinary(req.file.buffer);
       item.image = {
-        url: req.file.path,
-        public_id: req.file.filename,
+        url: uploadResult.secure_url,
+        public_id: uploadResult.public_id,
       };
     }
 
@@ -156,17 +157,12 @@ const updateItem = (itemName) => async (req, res) => {
     res.status(200).json(item);
   } catch (error) {
     console.error(`Error updating ${itemName}:`, error);
-    res.status(500).json({ 
-      message: `Error updating ${itemName}`,
-      error: error.message,
-      details: error.stack 
-    });
+    res.status(500).json({ message: `Error updating ${itemName}`, error: error.message });
   }
 };
 
-const deleteItem = (itemName) => async (req, res) => {
+const deleteItem = (itemName, sectionName) => async (req, res) => {
   const { id } = req.params;
-  const section = `${itemName.toLowerCase()}s`;
 
   try {
     const aboutPage = await AboutPage.findOne();
@@ -174,37 +170,35 @@ const deleteItem = (itemName) => async (req, res) => {
       return res.status(404).json({ message: 'About Page not found' });
     }
 
-    const item = aboutPage[section].id(id);
+    const item = aboutPage[sectionName].id(id);
     if (!item) {
       return res.status(404).json({ message: `${itemName} not found` });
     }
 
-    // TODO: Delete image from Cloudinary if it exists
+    if (item.image && item.image.public_id) {
+      await cloudinary.uploader.destroy(item.image.public_id);
+    }
 
     item.remove();
     await aboutPage.save();
     res.status(200).json({ message: `${itemName} deleted successfully` });
   } catch (error) {
     console.error(`Error deleting ${itemName}:`, error);
-    res.status(500).json({ 
-      message: `Error deleting ${itemName}`,
-      error: error.message,
-      details: error.stack 
-    });
+    res.status(500).json({ message: `Error deleting ${itemName}`, error: error.message });
   }
 };
 
 // --- Content Block Controllers ---
-export const addContentBlock = addItem('ContentBlock');
-export const updateContentBlock = updateItem('ContentBlock');
-export const deleteContentBlock = deleteItem('ContentBlock');
+export const addContentBlock = addItem('Content Block', 'contentBlocks');
+export const updateContentBlock = updateItem('Content Block', 'contentBlocks');
+export const deleteContentBlock = deleteItem('Content Block', 'contentBlocks');
 
 // --- Amenity Controllers ---
-export const addAmenity = addItem('Amenity');
-export const updateAmenity = updateItem('Amenity');
-export const deleteAmenity = deleteItem('Amenity');
+export const addAmenity = addItem('Amenity', 'amenities');
+export const updateAmenity = updateItem('Amenity', 'amenities');
+export const deleteAmenity = deleteItem('Amenity', 'amenities');
 
 // --- Service Controllers ---
-export const addService = addItem('Service');
-export const updateService = updateItem('Service');
-export const deleteService = deleteItem('Service');
+export const addService = addItem('Service', 'services');
+export const updateService = updateItem('Service', 'services');
+export const deleteService = deleteItem('Service', 'services');
