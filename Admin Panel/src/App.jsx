@@ -19,6 +19,7 @@ import AdminDistinctivePreview from "./components/PageManagement/AdminDistinctiv
 import OfferManagement from "./pages/OfferManagement";
 import AddOfferPage from "./pages/AddOfferPage";
 import FacilityManagement from "./pages/FacilityManagement";
+import AboutManagement from "./pages/AboutManagement";
 
 const MainLayout = ({ children }) => (
   <div className="flex h-screen bg-page dark:bg-page">
@@ -82,6 +83,10 @@ const App = () => {
          <Route
           path="/facility-management"
           element={renderWithLayout(FacilityManagement)}
+        />
+          <Route
+          path="/about-management"
+          element={renderWithLayout(AboutManagement)}
         />
       </Routes>
     </BrowserRouter>
