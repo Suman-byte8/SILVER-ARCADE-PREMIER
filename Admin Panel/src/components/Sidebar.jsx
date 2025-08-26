@@ -80,7 +80,7 @@ export default function Sidebar() {
         </li>
 
 
-        <li>
+        {/* <li>
           <Link to="/reservations" className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer gap-2">
             <RiReservedFill />
             <span className="">Reservation</span>
@@ -113,7 +113,7 @@ export default function Sidebar() {
             <IoMdSettings />
             <span className="">Settings</span>
           </Link>
-        </li>
+        </li> */}
       </ul>
 
       <div className="mt-auto flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer">

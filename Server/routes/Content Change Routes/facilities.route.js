@@ -8,7 +8,7 @@ const {
   deleteFacility 
 } = require('../../controllers/Dynamic Content/Facility Management/facilities.controller');
 const { protect, authorize } = require('../../middlewares/authMiddleware');
-const upload = require('../../middlewares/uploadMiddleware');
+const { upload, handleMulterError } = require('../../middlewares/uploadMiddleware');
 const { check } = require('express-validator');
 
 // Validation middleware
@@ -29,6 +29,7 @@ router.post('/admin/add-facility',
   protect, 
   authorize('admin'), 
   upload.single('image'),
+  handleMulterError,
   validateFacility,
   createFacility
 );
@@ -37,6 +38,7 @@ router.put('/admin/update-facility/:id',
   protect, 
   authorize('admin'), 
   upload.single('image'),
+  handleMulterError,
   validateFacility,
   updateFacility
 );

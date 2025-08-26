@@ -6,35 +6,66 @@ async function addRooms(req, res) {
     try {
         const { roomName, roomType, roomCapacity, roomPrice, roomDescription, roomStatus } = req.body;
         
-        let roomImage = '';
-        if(req.file){
-            try{
-                // Upload image to Cloudinary
-                let streamUpload = (file) => {
+        const roomImages = [];
+        let heroImageUrl = null;
+        
+        // Handle hero image upload
+        if (req.files && req.files['heroImage'] && req.files['heroImage'][0]) {
+            try {
+                const heroFile = req.files['heroImage'][0];
+                const heroResult = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        {
+                            folder: 'silver-arcade/rooms/hero',
+                        },
+                        (error, result) => {
+                            if (result) {
+                                resolve(result);
+                            } else {
+                                reject(error);
+                            }
+                        }
+                    );
+                    streamifier.createReadStream(heroFile.buffer).pipe(stream);
+                });
+                heroImageUrl = heroResult.secure_url;
+            } catch (error) {
+                console.error('Error uploading hero image:', error);
+                return res.status(500).json({ message: 'Error uploading hero image' });
+            }
+        }
+        
+        // Handle room images upload
+        if (req.files && req.files['roomImages'] && req.files['roomImages'].length > 0) {
+            try {
+                const uploadPromises = req.files['roomImages'].map((file) => {
                     return new Promise((resolve, reject) => {
                         const stream = cloudinary.uploader.upload_stream(
                             {
                                 folder: 'silver-arcade/rooms',
                             },
                             (error, result) => {
-                            if (result) {
-                                resolve(result);
-                            } else {
-                                reject(error);
+                                if (result) {
+                                    resolve({
+                                        url: result.secure_url,
+                                        isHero: false
+                                    });
+                                } else {
+                                    reject(error);
+                                }
                             }
-                        });
+                        );
                         streamifier.createReadStream(file.buffer).pipe(stream);
                     });
-                }
-                const result = await streamUpload(req.file);
-                roomImage = result.secure_url; // Get the secure URL of the uploaded image
-            }
-            catch (error) {
-                console.error('Error uploading image:', error);
-                return res.status(500).json({ message: 'Error uploading image' });
+                });
+                
+                const uploadedImages = await Promise.all(uploadPromises);
+                roomImages.push(...uploadedImages);
+            } catch (error) {
+                console.error('Error uploading room images:', error);
+                return res.status(500).json({ message: 'Error uploading room images' });
             }
         }
-        
         
         const newRoom = new Room({
             roomName,
@@ -42,8 +73,9 @@ async function addRooms(req, res) {
             roomCapacity,
             roomPrice,
             roomDescription,
-            roomImage,
-            roomStatus
+            roomImages,
+            roomStatus,
+            heroImage: heroImageUrl
         });
         await newRoom.save();
         res.status(201).json({
@@ -61,7 +93,7 @@ async function addRooms(req, res) {
 async function updateRoomDetails(req, res) {
     try {
         const { roomId } = req.params;
-        const { roomName, roomType, roomCapacity, roomPrice, roomDescription, roomStatus } = req.body;
+        const { roomName, roomType, roomCapacity, roomPrice, roomDescription, removedImages: removedImagesJSON } = req.body;
         const room = await Room.findById(roomId);
         if (!room) {
             return res.status(404).json({ message: 'Room not found' });
@@ -71,33 +103,87 @@ async function updateRoomDetails(req, res) {
         room.roomCapacity = roomCapacity || room.roomCapacity;
         room.roomPrice = roomPrice || room.roomPrice;
         room.roomDescription = roomDescription || room.roomDescription;
-        room.roomStatus = roomStatus || room.roomStatus;
-        if (req.file) {
+
+        if (removedImagesJSON) {
+            const removedImages = JSON.parse(removedImagesJSON);
+            if (Array.isArray(removedImages) && removedImages.length > 0) {
+                // Optional: Delete from Cloudinary
+                const publicIds = room.roomImages
+                    .filter(img => removedImages.includes(img._id.toString()))
+                    .map(img => {
+                        const parts = img.url.split('/');
+                        const publicIdWithExtension = parts.slice(parts.indexOf('silver-arcade')).join('/');
+                        return publicIdWithExtension.substring(0, publicIdWithExtension.lastIndexOf('.'));
+                    });
+
+                if (publicIds.length > 0) {
+                    await cloudinary.api.delete_resources(publicIds);
+                }
+
+                room.roomImages = room.roomImages.filter(img => !removedImages.includes(img._id.toString()));
+            }
+        }
+
+        // room.roomStatus = roomStatus || room.roomStatus;
+        
+        // Handle hero image upload
+        if (req.files && req.files['heroImage'] && req.files['heroImage'][0]) {
             try {
-                // Upload new image to Cloudinary
-                let streamUpload = (file) => {
+                const heroFile = req.files['heroImage'][0];
+                const heroResult = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        {
+                            folder: 'silver-arcade/rooms/hero',
+                        },
+                        (error, result) => {
+                            if (result) {
+                                resolve(result);
+                            } else {
+                                reject(error);
+                            }
+                        }
+                    );
+                    streamifier.createReadStream(heroFile.buffer).pipe(stream);
+                });
+                room.heroImage = heroResult.secure_url;
+            } catch (error) {
+                console.error('Error uploading hero image:', error);
+                return res.status(500).json({ message: 'Error uploading hero image' });
+            }
+        }
+        
+        // Handle room images upload
+        if (req.files && req.files['roomImages'] && req.files['roomImages'].length > 0) {
+            try {
+                const uploadPromises = req.files['roomImages'].map((file) => {
                     return new Promise((resolve, reject) => {
                         const stream = cloudinary.uploader.upload_stream(
                             {
                                 folder: 'silver-arcade/rooms',
                             },
                             (error, result) => {
-                            if (result) {
-                                resolve(result);
-                            } else {
-                                reject(error);
+                                if (result) {
+                                    resolve({
+                                        url: result.secure_url,
+                                        isHero: false
+                                    });
+                                } else {
+                                    reject(error);
+                                }
                             }
-                        });
+                        );
                         streamifier.createReadStream(file.buffer).pipe(stream);
                     });
-                }
-                const result = await streamUpload(req.file);
-                room.roomImage = result.secure_url; // Update the room image URL
+                });
+                
+                const uploadedImages = await Promise.all(uploadPromises);
+                room.roomImages.push(...uploadedImages);
             } catch (error) {
-                console.error('Error uploading image:', error);
-                return res.status(500).json({ message: 'Error uploading image' });
+                console.error('Error uploading room images:', error);
+                return res.status(500).json({ message: 'Error uploading room images' });
             }
         }
+        
         await room.save();
         res.status(200).json({
             success: true,

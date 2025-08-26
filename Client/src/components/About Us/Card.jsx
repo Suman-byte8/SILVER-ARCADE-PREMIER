@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Img } from "react-image";
 
 const Card = ({obj, index}) => {
+  // useEffect(() => {
+  //   console.log("Card component received obj:", obj);
+  // }, [obj]);
+
   return (
     <div
     key={index}

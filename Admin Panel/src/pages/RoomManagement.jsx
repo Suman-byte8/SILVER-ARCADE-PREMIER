@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash, FaSpinner } from "react-icons/fa";
 import AddRoomModal from "../components/RoomManagement/AddRoomModal";
-import EditRoomModal from "../components/RoomManagement/EditRoomPage";
+import EditRoomModal from "../components/RoomManagement/EditRoomModal";
 import { getRooms, addRoom, updateRoom, deleteRoom } from "../services/rooms";
 
 export default function RoomManagement() {
@@ -22,6 +22,7 @@ export default function RoomManagement() {
       try {
         const data = await getRooms(token);
         setRooms(data);
+        console.log(data);
       } catch (err) {
         console.error(err);
         setError("Failed to fetch rooms");
@@ -101,19 +102,16 @@ export default function RoomManagement() {
       {/* Rooms List */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {rooms.map((room) => (
-          <div
-            key={room._id}
-            className="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between"
-          >
-             {room.roomImage && (
+          <div key={room._id} className="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between mb-4">
+            <div>
+              {room.heroImage && (
                 <img
-                  src={room.roomImage}
+                  src={room.heroImage}
                   alt={room.roomName}
                   className="mt-3 w-full h-40 object-cover rounded-lg"
                 />
               )}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 mt-4">
                 {room.roomName}
               </h2>
               <p className="text-sm text-gray-500">{room.roomType}</p>
@@ -123,11 +121,9 @@ export default function RoomManagement() {
               <p className="text-gray-600">
                 Price: ₹{room.roomPrice.toLocaleString()}
               </p>
-              <p className="text-gray-600">Status: {room.roomStatus}</p>
               <p className="mt-2 text-sm text-gray-500 line-clamp-2">
                 {room.roomDescription}
               </p>
-             
             </div>
 
             {/* Actions */}

@@ -1,6 +1,6 @@
 const express = require('express');
 const aboutController = require('../../controllers/Dynamic Content/About Page Controller/about.controller.js');
-const upload = require('../../middlewares/uploadMiddleware.js');
+const { upload, handleMulterError } = require('../../middlewares/uploadMiddleware.js');
 const { protect, authorize } = require('../../middlewares/authMiddleware.js');
 
 // Assuming you have protect middleware for protecting routes
@@ -14,11 +14,11 @@ const router = express.Router();
 router.get('/', aboutController.getAboutPage);
 
 // --- About Us Section ---
-router.put('/admin/update-about-us', protect, authorize("admin"), upload.single('headerImage'), aboutController.updateAboutUsSection);
+router.put('/admin/update-about-us', protect, authorize("admin"), upload.single('headerImage'), handleMulterError, aboutController.updateAboutUsSection);
 
 // --- Content Blocks ---
-router.post('/admin/content-blocks', protect, authorize("admin"), upload.single('image'), aboutController.addContentBlock);
-router.put('/admin/content-blocks/:id', protect, authorize("admin"), upload.single('image'), aboutController.updateContentBlock);
+router.post('/admin/content-blocks', protect, authorize("admin"), upload.single('image'), handleMulterError, aboutController.addContentBlock);
+router.put('/admin/content-blocks/:id', protect, authorize("admin"), upload.single('image'), handleMulterError, aboutController.updateContentBlock);
 router.delete('/admin/content-blocks/:id', protect, authorize("admin"), aboutController.deleteContentBlock);
 
 // --- Amenities ---

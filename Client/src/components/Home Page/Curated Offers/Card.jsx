@@ -2,13 +2,16 @@ import React, { useEffect } from 'react'
 import { Img } from 'react-image';
 
 const Card = ({offers, className}) => {
+  useEffect(() => {
+    console.log("Offer data in Card component:", offers);
+  }, [offers]);
     
   return (
     <div className={`w-[360px] bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 ${className}`}>
     {/* Image */}
     <div className="w-full h-64 overflow-hidden">
       <img
-        src={offers.img}
+        src={offers.image}
         alt={offers.title}
         className="w-full h-full object-cover"
       />
@@ -24,8 +27,8 @@ const Card = ({offers, className}) => {
       {/* List */}
       <ul className="text-gray-600 text-sm mt-4 space-y-1 px-2">
         {
-            offers.points.map((point) => {
-                return <li key={point} className='list-disc text-left my-2'>{point}</li>
+            offers.details && offers.details.length > 0 && offers.details.map((point) => {
+                return <li key={point} className='list-disc text-left my-2 mt-1'>{point}</li>
             })
         }
       </ul>

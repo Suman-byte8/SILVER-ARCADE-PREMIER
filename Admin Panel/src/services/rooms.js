@@ -83,3 +83,23 @@ export const deleteRoom = async (id, token) => {
     throw error;
   }
 };
+
+/**
+ * Fetches a single room by ID.
+ * @param {string} id - The ID of the room to fetch.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<any>} The response data containing the room.
+ */
+export const getRoomById = async (id, token) => {
+  try {
+    const res = await axios.get(`${API_URL}/rooms/get-room/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data.room;
+  } catch (error) {
+    console.error("Error fetching room:", error);
+    throw error;
+  }
+};

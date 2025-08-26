@@ -1,16 +1,22 @@
-# Offer Management Modal Enhancement Plan
+# File Size Validation Enhancement - TODO List
 
-## Steps to Complete:
+## Phase 1: Backend Improvements
+- [x] Update uploadMiddleware.js with configurable file size limits
+- [x] Add better error handling for file size validation
+- [x] Make file size limits configurable via environment variables
 
-1. [x] Enhance EditOffer.jsx modal with professional styling improvements
-2. [x] Convert AddOffer.jsx to modal format with cross button and blurred background
-3. [x] Update OfferManagement.jsx to use routing for AddOffer instead of inline display
-4. [x] Verify App.jsx routing is properly configured
-5. [ ] Test the modal functionality and image editing
+## Phase 2: Frontend Improvements  
+- [x] Add client-side file size validation in AddRoomModal.jsx
+- [x] Add client-side file size validation in EditRoomPage.jsx
+- [x] Implement user-friendly error messages
+- [x] Prevent upload of oversized files
 
-## Progress:
-- EditOffer.jsx: ✅ Completed - Enhanced modal with professional styling, cross button, and improved image upload
-- AddOffer.jsx: ✅ Completed - Converted to modal format with cross button and blurred background
-- OfferManagement.jsx: ✅ Completed - Updated to use routing for AddOffer
-- App.jsx: ✅ Completed - Routing properly configured
-- Testing: Pending
+## Phase 3: Testing
+- [ ] Test backend validation with various file sizes
+- [ ] Test frontend validation with various file sizes
+- [ ] Verify error messages are properly displayed
+- [ ] Test both single and multiple file upload scenarios
+
+## Phase 4: Documentation
+- [ ] Update documentation for new file size limits
+- [ ] Add comments for configuration options
