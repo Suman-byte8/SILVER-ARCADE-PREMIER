@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Img } from "react-image";
 
 const RoomCard = ({ room, key }) => {
+  useEffect(() => {
+    console.log("Room data:", room);
+  }, [room]);
   return (
     <div
       key={key}
@@ -15,7 +18,7 @@ const RoomCard = ({ room, key }) => {
         />
       </div>
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="font-semibold">{room.name}</h3>
+        <h3 className="font-semibold text-2xl mb-2">{room.roomType}</h3>
         <p className="text-gray-600 text-sm mt-1 flex-grow">
           {room.description}
         </p>

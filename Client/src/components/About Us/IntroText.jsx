@@ -4,7 +4,7 @@ const IntroText = ({ aboutData }) => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-gray-800 space-y-12 md:space-y-20">
       {/* Intro */}
-      <div className="text-center max-w-3xl mx-auto">
+      <div className="max-w-full mx-auto text-justify">
         <p className="text-base sm:text-lg font-light leading-relaxed mb-6">
           {aboutData?.aboutUsSection?.description}
         </p>

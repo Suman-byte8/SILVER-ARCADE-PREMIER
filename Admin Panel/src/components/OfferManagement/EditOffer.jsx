@@ -80,7 +80,7 @@ const EditOffer = ({
                 <input
                   type="text"
                   value={offer.description}
-                  onChange={(e) => onChange(e, "subtitle")}
+                  onChange={(e) => onChange(e, "description")}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#2c5e6e] focus:border-transparent transition-all duration-200"
                   placeholder="Enter offer subtitle"
                   required
