@@ -14,7 +14,6 @@
     "@emotion/styled": "^11.14.1",
     "@imagekit/react": "^5.0.1",
     "@mui/material": "^7.3.1",
-    "@netlify/blobs": "^10.0.8",
     "@tailwindcss/vite": "^4.1.12",
     "axios": "^1.11.0",
     "browser-image-compression": "^2.0.2",
