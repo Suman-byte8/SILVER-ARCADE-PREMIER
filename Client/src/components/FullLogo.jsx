@@ -1,6 +1,6 @@
 import React from "react";
 import { Img } from "react-image";
-import logo from "/logo.png";
+import logo from "../../public/logo.png";
 
 const FullLogo = ({ isFlex = true, classes = "",text }) => (
   <div
