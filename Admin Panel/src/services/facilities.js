@@ -6,10 +6,14 @@ const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
  * Fetches all facilities.
  * @returns {Promise<any>} The response data containing facilities.
  */
-export const getFacilities = async () => {
+export const getFacilities = async (token) => {
   try {
-    const res = await axios.get(`${API_URL}/facilities/get-facilities`,
-        
+    const res = await axios.get(`${API_URL}/facilities/get-facilities`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+
     );
     return res.data.facilities;
   } catch (error) {

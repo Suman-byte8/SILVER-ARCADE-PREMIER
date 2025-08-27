@@ -28,7 +28,7 @@ export default function FacilityManagement() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
-        const data = await getFacilities();
+        const data = await getFacilities(token);
         setFacilities(data);
       } catch (err) {
         console.error(err);

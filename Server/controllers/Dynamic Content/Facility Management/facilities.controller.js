@@ -1,5 +1,27 @@
 const Facility = require('../../../schema/Client Content Models/Our Facilities/facilities.model');
-const { uploadToCloudinary } = require('../../../config/cloudinary');
+const cloudinary = require('../../../config/cloudinary');
+const streamifier = require('streamifier');
+
+// --- Cloudinary Upload Helper ---
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'silver-arcade-premier-facilities',
+        transformation: [{ width: 1024, crop: 'limit' }, { quality: 'auto' }],
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
+};
 
 // Get all facilities
 async function getFacilities(req, res) {
@@ -37,10 +59,15 @@ async function createFacility(req, res) {
   try {
     const { title, subtitle, description, path, order, isActive } = req.body;
     
-    let imageUrl = '';
+    let imageUrl = '/assets/default-facility.jpg'; // Default image
     if (req.file) {
-      const uploadResult = await uploadToCloudinary(req.file);
-      imageUrl = uploadResult.secure_url;
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer);
+        imageUrl = uploadResult.secure_url;
+      } catch (uploadError) {
+        console.error('Cloudinary upload failed, using default image:', uploadError);
+        // Continue with default image instead of failing
+      }
     }
 
     const facility = new Facility({
@@ -62,7 +89,11 @@ async function createFacility(req, res) {
     });
   } catch (error) {
     console.error('Error creating facility:', error);
-    res.status(500).json({ message: 'Server error while creating facility' });
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error while creating facility',
+      error: error.message 
+    });
   }
 }
 
@@ -81,8 +112,14 @@ async function updateFacility(req, res) {
     };
 
     if (req.file) {
-      const uploadResult = await uploadToCloudinary(req.file);
-      updateData.image = uploadResult.secure_url;
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer);
+        updateData.image = uploadResult.secure_url;
+      } catch (uploadError) {
+        console.error('Cloudinary upload failed during update:', uploadError);
+        // Don't update the image if upload fails, keep existing image
+        delete updateData.image;
+      }
     }
 
     const facility = await Facility.findByIdAndUpdate(

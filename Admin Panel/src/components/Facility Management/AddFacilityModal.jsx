@@ -34,7 +34,6 @@ export default function AddFacilityModal({ isOpen, onClose, onSave }) {
     if (!formData.title.trim()) newErrors.title = "Title is required";
     if (!formData.description.trim()) newErrors.description = "Description is required";
     if (!formData.path.trim()) newErrors.path = "Path is required";
-    if (!image) newErrors.image = "Image is required";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -153,7 +152,7 @@ export default function AddFacilityModal({ isOpen, onClose, onSave }) {
             />
             <label htmlFor="facility-image">
               <Button variant="outlined" component="span">
-                Upload Image *
+                Upload Image
               </Button>
             </label>
             {image && (

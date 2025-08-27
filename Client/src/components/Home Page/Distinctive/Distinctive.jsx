@@ -47,8 +47,7 @@ const Distinctive = () => {
 
       <div className="w-full sm:w-[90%] md:w-[70%] text-center">
         <p className="text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed">
-          Experience the warmth of Bengal's tradition with world-class hospitality
-          at Silver Arcade Premier, crafted for leisure and business alike.
+        Silver Arcade Premier stands as Malda’s most refined destination for discerning travelers. A perfect blend of modern design, timeless hospitality, and world-class amenities, the hotel offers an exceptional stay for business executives, leisure seekers, and families looking for comfort, luxury, and memorable experiences.
         </p>
       </div>
 
