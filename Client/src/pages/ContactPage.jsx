@@ -1,7 +1,5 @@
-import React from 'react';
-import Navbar from '../components/Navbar';
-import Contact from '../components/Home Page/Contact Us/Contact';
-import Footer from '../components/Footer';
+import React from "react";
+import Contact from "../components/Home Page/Contact Us/Contact";
 
 const ContactPage = () => {
   return (
