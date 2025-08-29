@@ -26,6 +26,7 @@ export default function OurFacilities() {
         const data = await response.json();
         if (data.success) {
           setFacilities(data.facilities);
+          console.log(data.facilities);
         } else {
           setError("Failed to fetch facilities");
         }

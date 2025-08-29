@@ -1,7 +1,7 @@
 // src/pages/PageManagement/Distinctive/DescLayout.jsx
 import React from "react";
 import Slider from "../../Carousel/Slider";
-import FullLogo from "../../Home/FullLogo";
+import FullLogo from "../../FullLogo";
 
 const DescLayout = ({ desc, isAdminPreview = false }) => {
   if (!desc) return null;

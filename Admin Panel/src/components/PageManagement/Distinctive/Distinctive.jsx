@@ -1,6 +1,6 @@
 // src/pages/PageManagement/Distinctive/Distinctive.jsx
 import React, { useState } from "react";
-import FullLogo from "../../Home/FullLogo";
+import FullLogo from "../../FullLogo";
 import DescLayout from "./DescLayout";
 
 const Distinctive = ({ distinctives, isAdminPreview = false }) => {
