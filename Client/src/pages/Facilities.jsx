@@ -16,7 +16,7 @@ export default function OurFacilities() {
     const fetchFacilities = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/facilities/get-facilities`,
+          `${import.meta.env.VITE_BACKEND_URL}/facilities/get-facilities`,
           {
             headers: {
               Authorization: `Bearer ${import.meta.env.VITE_TEMP_TOKEN}`,
