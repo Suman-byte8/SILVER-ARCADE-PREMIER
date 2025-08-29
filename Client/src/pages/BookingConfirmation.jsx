@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { fetchAccommodationDetails } from '../components/Reservation/api/accommodationApi';
 import { getBookingType, formatDate } from "../utils/bookingUtils";
-import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone } from "react-icons/fa";
+import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone, FaArrowLeft } from "react-icons/fa";
 
 const BookingConfirmation = () => {
   const location = useLocation();
@@ -274,6 +274,13 @@ const BookingConfirmation = () => {
           For assistance, please refer to your booking confirmation email or
           contact our support team.
         </p>
+        <Link
+          to="/"
+          className="text-blue-600 hover:underline text-center text-sm block mt-2 flex items-center gap-2 mt-6 justify-center"
+        >
+          <FaArrowLeft />
+          Back to Home
+        </Link>
       </div>
     </div>
   );
