@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { fetchAccommodationDetails } from '../components/Reservation/api/accommodationApi';
+import { fetchRestaurantReservationDetails } from '../components/Reservation/api/restaurantReservationApi';
+import { fetchMeetingReservationDetails } from '../components/Reservation/api/meetingReservationApi';
 import { getBookingType, formatDate } from "../utils/bookingUtils";
-import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone, FaArrowLeft } from "react-icons/fa";
+import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone, FaArrowLeft, FaBuilding, FaUtensils, FaInfoCircle } from "react-icons/fa";
 
 const BookingConfirmation = () => {
   const location = useLocation();
@@ -23,20 +25,32 @@ const BookingConfirmation = () => {
       }
 
       const token = import.meta.env.VITE_TEMP_TOKEN;
-      const { data, error: fetchError } = await fetchAccommodationDetails(bookingId, token);
+      let result;
+
+      // Determine booking type from initial data to call appropriate API
+      const bookingTypeFromData = getBookingType(initialData);
       
-      if (fetchError) {
-        setError(fetchError);
-        toast.error(fetchError);
+      if (bookingTypeFromData === "restaurant") {
+        result = await fetchRestaurantReservationDetails(bookingId, token);
+      } else if (bookingTypeFromData === "meeting") {
+        result = await fetchMeetingReservationDetails(bookingId, token);
       } else {
-        setBooking(data);
+        // Default to accommodation for other types
+        result = await fetchAccommodationDetails(bookingId, token);
+      }
+      
+      if (result.error) {
+        setError(result.error);
+        toast.error(result.error);
+      } else {
+        setBooking(result.data);
       }
       
       setLoading(false);
     };
 
     getBooking();
-  }, [bookingId]);
+  }, [bookingId, initialData]);
 
   // Use the fetched booking data or fall back to initial data
   const bookingData = booking || initialData;
@@ -98,7 +112,7 @@ const BookingConfirmation = () => {
               <FaBuilding className="text-gray-500" />
               <div>
                 <p className="text-sm text-gray-600">Event Type</p>
-                <p className="font-medium">{bookingData.selectedEvent}</p>
+                <p className="font-medium">{bookingData.typeOfReservation}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 mb-2">
@@ -106,8 +120,8 @@ const BookingConfirmation = () => {
               <div>
                 <p className="text-sm text-gray-600">Event Duration</p>
                 <p className="font-medium">
-                  {formatDate(bookingData.startDate)} -{" "}
-                  {formatDate(bookingData.endDate)}
+                  {formatDate(bookingData.reservationDate)} -{" "}
+                  {formatDate(bookingData.reservationEndDate)}
                 </p>
               </div>
             </div>
@@ -142,7 +156,7 @@ const BookingConfirmation = () => {
               <div>
                 <p className="text-sm text-gray-600">Date</p>
                 <p className="font-medium">
-                  {formatDate(bookingData.selectedDate)}
+                  {formatDate(bookingData.date)}
                 </p>
               </div>
             </div>
@@ -180,28 +194,24 @@ const BookingConfirmation = () => {
   };
 
   const renderContactDetails = () => {
-    // const name = bookingData.guestName || bookingData.name;
-    // const email = bookingData.guestEmail || bookingData.email;
-    // const phone = bookingData.guestPhoneNumber || bookingData.phoneNumber;
-
     return (
       <>
-        {booking.guestInfo.name && (
+        {bookingData.guestInfo?.name && (
           <div className="flex items-center gap-3 mb-2">
             <FaUser className="text-gray-500" />
-            <p>{booking.guestInfo.name}</p>
+            <p>{bookingData.guestInfo.name}</p>
           </div>
         )}
-        {booking.guestInfo.email && (
+        {bookingData.guestInfo?.email && (
           <div className="flex items-center gap-3 mb-2">
             <FaEnvelope className="text-gray-500" />
-            <p>{booking.guestInfo.email}</p>
+            <p>{bookingData.guestInfo.email}</p>
           </div>
         )}
-        {booking.guestInfo.phoneNumber && (
+        {bookingData.guestInfo?.phoneNumber && (
           <div className="flex items-center gap-3">
             <FaPhone className="text-gray-500" />
-            <p>{booking.guestInfo.phoneNumber}</p>
+            <p>{bookingData.guestInfo.phoneNumber}</p>
           </div>
         )}
       </>
@@ -276,7 +286,7 @@ const BookingConfirmation = () => {
         </p>
         <Link
           to="/"
-          className="text-blue-600 hover:underline text-center text-sm block mt-2 flex items-center gap-2 mt-6 justify-center"
+          className="text-blue-600 hover:underline text-center text-sm flex items-center gap-2 mt-6 justify-center"
         >
           <FaArrowLeft />
           Back to Home

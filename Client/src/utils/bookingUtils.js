@@ -1,6 +1,6 @@
 export const getBookingType = (bookingData) => {
   if (bookingData.arrivalDate) return "accommodation";
-  if (bookingData.selectedEvent) return "meeting";
+  if (bookingData.selectedEvent || bookingData.typeOfReservation) return "meeting";
   if (bookingData.timeSlot) return "restaurant";
   return null;
 };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from 'react-hot-toast';
 import {
   FaBuilding,
   FaCalendarAlt,
@@ -11,6 +12,7 @@ import {
 import Calendar from "./Calender";
 import FullLogo from "../FullLogo";
 import BookingButton from "./BookingButton";
+import { createMeetingReservation } from "./api/meetingReservationApi";
 
 export default function MeetingWeddingForm({ onSubmit }) {
   const today = new Date();
@@ -48,20 +50,47 @@ export default function MeetingWeddingForm({ onSubmit }) {
     setShowStartCalendar(false);
   };
 
-  const handleSubmit = () => {
-    const formData = {
-      selectedEvent,
-      numberOfGuests,
-      startDate: startDate.toISOString(), // Convert Date to ISO string for serialization
-      endDate: endDate.toISOString(),     // Convert Date to ISO string for serialization
-      numberOfRooms,
-      additionalDetails,
-      name,
-      phoneNumber,
-      email,
-      requiresRooms,
-    };
-    onSubmit(formData);
+  const handleSubmit = async () => {
+    try {
+      // Form validation
+      if (!name || !phoneNumber || !email) {
+        toast.error('Please fill in all contact information');
+        return;
+      }
+
+      const formData = {
+        typeOfReservation: selectedEvent || 'Other',
+        reservationDate: startDate.toISOString(),
+        reservationEndDate: endDate.toISOString(),
+        numberOfRooms,
+        numberOfGuests,
+        additionalDetails,
+        guestInfo: {
+          name,
+          phoneNumber,
+          email
+        },
+        agreeToTnC: true, // Assuming user agrees to terms by submitting
+        requiresRooms,
+      };
+
+      const token = import.meta.env.VITE_TEMP_TOKEN;
+      const { data, error } = await createMeetingReservation(formData, token);
+
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      toast.success('Booking request submitted successfully!');
+      onSubmit({
+        ...data,
+        bookingId: data._id
+      });
+    } catch (error) {
+      console.error('Booking error:', error);
+      toast.error('Something went wrong with the booking request');
+    }
   };
 
   return (
@@ -248,7 +277,7 @@ export default function MeetingWeddingForm({ onSubmit }) {
           </div>
         </div>
 
-        <div className="col-span-1 md:col-span-2">
+        <div className="col-span-1 md:col-span-2 mb-8">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Email
           </label>
@@ -264,7 +293,7 @@ export default function MeetingWeddingForm({ onSubmit }) {
           </div>
         </div>
 
-        {/* Event Requires Rooms */}
+        {/* Event Requires Rooms
         <div className="col-span-1 md:col-span-2 pb-8">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             DOES YOUR EVENT REQUIRE ROOMS?
@@ -293,10 +322,10 @@ export default function MeetingWeddingForm({ onSubmit }) {
               <span className="text-gray-700">NO</span>
             </label>
           </div>
-        </div>
+        </div> */}
       </div>
 
-      <BookingButton text={"Place Your Request"} onClick={handleSubmit} />
+      <BookingButton text={"Place Your Request"} onSubmit={handleSubmit} />
     </div>
   );
 }

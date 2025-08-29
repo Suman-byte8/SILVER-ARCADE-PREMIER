@@ -2,4 +2,8 @@
 .netlify
 
 /test
+TODO.md
+node_modules
+.qodo
+.vscode
 

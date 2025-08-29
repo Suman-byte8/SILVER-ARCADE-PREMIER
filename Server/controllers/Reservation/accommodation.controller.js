@@ -1,6 +1,7 @@
 const Accommodation = require('../../schema/Reservation/accommodation.model');
+const { sendConfirmationEmail } = require('../../config/emailConfig');
 
-const recieveAccommodationBooking = async (req, res) => {
+const createAccommodationBooking = async (req, res) => {
     try {
         const {
             arrivalDate,
@@ -36,6 +37,9 @@ const recieveAccommodationBooking = async (req, res) => {
             totalChildren,
             guestInfo
         });
+
+        // Send confirmation email after successful booking
+        await sendConfirmationEmail(newBooking, 'Accommodation');
 
         return res.status(201).json({
             success: true,
@@ -76,31 +80,9 @@ const getAccommodationBookings = async (req, res) => {
     }
 }
 
-const getAllAccommodationBookings = async (req, res) => {
-    try {
-       
-        const booking = await Accommodation.find();
-        if (!booking) {
-            return res.status(404).json({
-                success: false,
-                message: "Booking not found"
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            data: booking
-        });
-    } catch (error) {
-        console.error('Error fetching accommodation booking:', error);
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Internal server error"
-        });
-    }
-}
 
 
 module.exports = {
-    recieveAccommodationBooking,
+    createAccommodationBooking,
     getAccommodationBookings
 };

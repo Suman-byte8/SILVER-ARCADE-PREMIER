@@ -1,13 +1,10 @@
 import axios from 'axios';
 
-export const createRestaurantReservation = async (formData, token) => {
+export const createMeetingReservation = async (formData, token) => {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/users/restaurant-reservations`,
-      {
-        typeOfReservation: 'restaurant',
-        ...formData
-      },
+      `${import.meta.env.VITE_BACKEND_URL}/users/meeting-reservations`,
+      formData,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -23,15 +20,15 @@ export const createRestaurantReservation = async (formData, token) => {
   } catch (error) {
     return {
       data: null,
-      error: error.response?.data?.message || 'Failed to create reservation'
+      error: error.response?.data?.message || 'Failed to create meeting/wedding reservation'
     };
   }
 };
 
-export const fetchRestaurantReservationDetails = async (bookingId, token) => {
+export const fetchMeetingReservationDetails = async (bookingId, token) => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/users/restaurant-reservations/${bookingId}`,
+      `${import.meta.env.VITE_BACKEND_URL}/users/meeting-reservations/${bookingId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,12 +39,12 @@ export const fetchRestaurantReservationDetails = async (bookingId, token) => {
     if (response.data.success) {
       return { data: response.data.data, error: null };
     } else {
-      throw new Error(response.data.message || "Failed to fetch restaurant reservation details");
+      throw new Error(response.data.message || "Failed to fetch meeting/wedding reservation details");
     }
   } catch (error) {
     return {
       data: null,
-      error: error.response?.data?.message || "Failed to fetch restaurant reservation details"
+      error: error.response?.data?.message || "Failed to fetch meeting/wedding reservation details"
     };
   }
 };

@@ -1,9 +1,9 @@
 const { validationResult } = require('express-validator');
-const RestaurantReservation = require('../../schema/Reservation/restaurantReservation.model');
+const meetingSchema = require("../../schema/Reservation/meetingOrWeddingReservation.model");
 const { sendConfirmationEmail } = require('../../config/emailConfig');
 
-// Create new restaurant reservation
-const createRestaurantReservation = async (req, res) => {
+// Create new meeting or wedding reservation
+const createMeetingReservation = async (req, res) => {
     try {
         // Check for validation errors
         const errors = validationResult(req);
@@ -15,20 +15,20 @@ const createRestaurantReservation = async (req, res) => {
         }
 
         // Create reservation
-        const reservation = await RestaurantReservation.create({
+        const reservation = await meetingSchema.create({
             ...req.body,
             userId: req.user._id // Add user ID from auth middleware
         });
 
         // Send confirmation email after successful reservation
-        await sendConfirmationEmail(reservation, 'Restaurant');
+        await sendConfirmationEmail(reservation, 'Meeting/Wedding');
 
         res.status(201).json({
             success: true,
             data: reservation
         });
     } catch (error) {
-        console.error('Restaurant Reservation Error:', error);
+        console.error('Meeting or Wedding Reservation Error:', error);
         res.status(400).json({
             success: false,
             error: error.message
@@ -36,8 +36,8 @@ const createRestaurantReservation = async (req, res) => {
     }
 };
 
-// Get restaurant reservation by ID
-const getRestaurantReservations = async (req, res) => {
+// Get meeting or wedding reservation by ID
+const getMeetingReservation = async (req, res) => {
     const bookingId = req.params.bookingId;
     if (!bookingId) {
         return res.status(400).json({
@@ -46,7 +46,7 @@ const getRestaurantReservations = async (req, res) => {
         });
     }
     try {
-        const reservation = await RestaurantReservation.findById(bookingId);
+        const reservation = await meetingSchema.findById(bookingId);
 
         if (!reservation) {
             return res.status(404).json({
@@ -60,7 +60,7 @@ const getRestaurantReservations = async (req, res) => {
             data: reservation
         });
     } catch (error) {
-        console.error('Get Reservation Error:', error);
+        console.error('Get Meeting Reservation Error:', error);
         res.status(400).json({
             success: false,
             error: error.message
@@ -69,6 +69,6 @@ const getRestaurantReservations = async (req, res) => {
 };
 
 module.exports = {
-    createRestaurantReservation,
-    getRestaurantReservations
+    createMeetingReservation,
+    getMeetingReservation
 };

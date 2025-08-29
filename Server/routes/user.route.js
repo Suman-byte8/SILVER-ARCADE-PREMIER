@@ -36,10 +36,10 @@ router.post('/login', validateLogin, loginUser)
 router.get('/profile/:userId', protect, getUserProfile);
 
 // accommodation room booking
-const { recieveAccommodationBooking, getAccommodationBookings } = require('../controllers/Reservation/accommodation.controller');
+const { createAccommodationBooking, getAccommodationBookings } = require('../controllers/Reservation/accommodation.controller');
 
 // Create new accommodation booking
-router.post('/accommodations', protect, recieveAccommodationBooking)
+router.post('/accommodations', protect, createAccommodationBooking)
 
 // get accommodation booking
 router.get('/accommodations/:bookingId', protect, getAccommodationBookings)
@@ -56,7 +56,7 @@ const validateRestaurantReservation = [
     check('guestInfo.name', 'Guest name is required').not().isEmpty(),
     check('guestInfo.phoneNumber', 'Valid phone number is required').not().isEmpty(),
     check('guestInfo.email', 'Valid email is required').isEmail(),
-    check('agreeToTnC', 'Terms and conditions must be accepted').equals('true')
+    check('agreeToTnC', 'Terms and conditions must be accepted').isBoolean().custom(value => value === true)
 ];
 
 // Create new restaurant reservation
@@ -65,9 +65,27 @@ router.post('/restaurant-reservations', protect, validateRestaurantReservation, 
 // Get restaurant reservation by booking ID
 router.get('/restaurant-reservations/:bookingId', protect, getRestaurantReservations);
 
+// Meeting/Wedding reservation routes
+const {createMeetingReservation, getMeetingReservation} = require('../controllers/Reservation/meetingOrWeddingReservation.controller');
 
-module.exports = router;
+// Validation middleware for meeting/wedding reservation
+const validateMeetingReservation = [
+    check('typeOfReservation', 'Reservation type is required').isIn(['Marriage', 'Reception', 'Birthday', 'Office Meeting', 'Other']),
+    check('reservationDate', 'Valid reservation date is required').isISO8601(),
+    check('reservationEndDate', 'Valid reservation end date is required').isISO8601(),
+    check('numberOfRooms', 'Number of rooms is required').isInt({ min: 0 }),
+    check('numberOfGuests', 'Number of guests is required').isInt({ min: 1 }),
+    check('guestInfo.name', 'Guest name is required').not().isEmpty(),
+    check('guestInfo.phoneNumber', 'Valid phone number is required').not().isEmpty(),
+    check('guestInfo.email', 'Valid email is required').isEmail(),
+    check('agreeToTnC', 'Terms and conditions must be accepted').isBoolean().custom(value => value === true)
+];
 
-//
+// Create new meeting/wedding reservation
+router.post('/meeting-reservations', protect, validateMeetingReservation, createMeetingReservation);
+
+// Get meeting/wedding reservation by booking ID
+router.get('/meeting-reservations/:bookingId', protect, getMeetingReservation);
+
 module.exports = router;
 

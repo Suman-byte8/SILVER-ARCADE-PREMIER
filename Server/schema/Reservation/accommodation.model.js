@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const roomSchema = new mongoose.Schema({
-  typeOfReservation: {
-    type: String,
-    required: true,
-    value: 'accommodation'
-  },
+
   adults: {
     type: Number,
     required: true,
@@ -21,6 +17,11 @@ const roomSchema = new mongoose.Schema({
 });
 
 const accommodationSchema = new mongoose.Schema({
+  typeOfReservation: {
+    type: String,
+    required: true,
+    default: 'accommodation'
+  },
   arrivalDate: {
     type: Date,
     required: true

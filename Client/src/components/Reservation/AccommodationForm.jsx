@@ -81,12 +81,10 @@ export default function AccommodationForm({ onSubmit }) {
       }
 
       const formData = {
+        typeOfReservation: 'accommodation',
         arrivalDate: arrivalDate.toISOString(),
         departureDate: departureDate.toISOString(),
-        rooms: rooms.map(room => ({
-          ...room,
-          typeOfReservation: 'accommodation'
-        })),
+        rooms: rooms,
         totalAdults: getTotalAdults(),
         totalChildren: getTotalChildren(),
         guestInfo: {
