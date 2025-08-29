@@ -5,6 +5,7 @@ import { fetchAccommodationDetails } from '../components/Reservation/api/accommo
 import { fetchRestaurantReservationDetails } from '../components/Reservation/api/restaurantReservationApi';
 import { fetchMeetingReservationDetails } from '../components/Reservation/api/meetingReservationApi';
 import { getBookingType, formatDate } from "../utils/bookingUtils";
+import { downloadConfirmationPDF } from "../utils/pdfGenerator";
 import { FaCheckCircle,FaCalendarAlt,FaBed,FaUser,FaEnvelope,FaPhone, FaArrowLeft, FaBuilding, FaUtensils, FaInfoCircle } from "react-icons/fa";
 
 const BookingConfirmation = () => {
@@ -272,10 +273,16 @@ const BookingConfirmation = () => {
 
         {/* Action Buttons */}
         <div className="flex gap-4 justify-center">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+          <button 
+            onClick={() => downloadConfirmationPDF(bookingData, bookingType)}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
             Download Confirmation
           </button>
-          <button className="border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-50">
+          <button 
+            onClick={() => window.print()}
+            className="border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             Print Details
           </button>
         </div>
