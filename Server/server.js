@@ -29,6 +29,8 @@ const roomsRoutes = require('./schema/Client Content Models/Room Management/room
 const facilitiesRoutes = require('./routes/Content Change Routes/facilities.route');
 // About page routes
 const aboutRoutes = require('./routes/Content Change Routes/about.route');
+// Contact routes
+const contactRoutes = require('./routes/contact.route');
 
 // Use routes
 app.use('/api/users', userRoutes);
@@ -36,7 +38,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/content/home', homeRoutes);
 app.use('/api/rooms', roomsRoutes);
 app.use('/api/facilities', facilitiesRoutes);
-app.use('/api/content/about', aboutRoutes)
+app.use('/api/content/about', aboutRoutes);
+app.use('/api', contactRoutes);
 
 // Start the server
 connectDB().then(() => {
