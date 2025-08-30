@@ -1,6 +1,7 @@
 const AboutPage = require("../../../schema/Client Content Models/About/about.model.js")
 const cloudinary = require('../../../config/cloudinary.js');
 const streamifier = require('streamifier');
+const dbOptimizer = require('../../../utilities/dbOptimizer');
 
 // --- Cloudinary Upload Helper ---
 
@@ -38,13 +39,20 @@ const uploadToCloudinary = (fileBuffer) => {
  */
 const getAboutPage = async (req, res) => {
   try {
-    let aboutPage = await AboutPage.findOne();
+    let aboutPage = await dbOptimizer.findOne(AboutPage, {}, {
+      context: { operation: 'get_about_page' }
+    });
     if (!aboutPage) {
-      aboutPage = await AboutPage.create({
+      aboutPage = await dbOptimizer.create(AboutPage, {
         aboutUsSection: {
           title: 'About Us',
           description: 'Welcome to our about page!',
         },
+        contentBlocks: [],
+        amenities: [],
+        services: []
+      }, {
+        context: { operation: 'create_default_about_page' }
       });
     }
     res.status(200).json(aboutPage);
@@ -64,7 +72,10 @@ const getAboutPage = async (req, res) => {
 const updateAboutUsSection = async (req, res) => {
   try {
     const { title, description } = req.body;
-    const aboutPage = await AboutPage.findOne();
+    const aboutPage = await dbOptimizer.findOne(AboutPage, {}, {
+      lean: false, // We need the Mongoose document to call save()
+      context: { operation: 'update_about_us_section' }
+    });
     if (!aboutPage) {
       return res.status(404).json({ message: 'About Page not found' });
     }
@@ -83,7 +94,9 @@ const updateAboutUsSection = async (req, res) => {
       };
     }
 
-    await aboutPage.save();
+    await dbOptimizer.save(aboutPage, {
+      context: { operation: 'save_about_us_section' }
+    });
     res.status(200).json(aboutPage.aboutUsSection);
   } catch (error) {
     console.error('Error updating About Us section:', error);
@@ -101,22 +114,37 @@ const addItem = (itemName, sectionName) => async (req, res) => {
   }
 
   try {
-    const aboutPage = await AboutPage.findOne();
+    const aboutPage = await dbOptimizer.findOne(AboutPage, {}, {
+      lean: false, // We need the Mongoose document to call save()
+      context: { operation: `add_${itemName.toLowerCase().replace(' ', '_')}` }
+    });
     if (!aboutPage) {
       return res.status(404).json({ message: 'About Page not found' });
     }
 
     const newItem = { title, description };
     if (req.file) {
-      const uploadResult = await uploadToCloudinary(req.file.buffer);
-      newItem.image = {
-        url: uploadResult.secure_url,
-        public_id: uploadResult.public_id,
-      };
+      try {
+        const uploadResult = await uploadToCloudinary(req.file.buffer);
+        newItem.image = {
+          url: uploadResult.secure_url,
+          public_id: uploadResult.public_id,
+        };
+      } catch (uploadError) {
+        console.error(`Cloudinary upload failed for ${itemName}:`, uploadError);
+        // Continue without image instead of failing
+      }
     }
 
+    // Ensure the section array exists
+    if (!aboutPage[sectionName]) {
+      aboutPage[sectionName] = [];
+    }
+    
     aboutPage[sectionName].push(newItem);
-    await aboutPage.save();
+    await dbOptimizer.save(aboutPage, {
+      context: { operation: `save_added_${itemName.toLowerCase().replace(' ', '_')}` }
+    });
     res.status(201).json(aboutPage[sectionName]);
   } catch (error) {
     console.error(`Error adding ${itemName}:`, error);
@@ -129,7 +157,10 @@ const updateItem = (itemName, sectionName) => async (req, res) => {
   const { title, description } = req.body;
 
   try {
-    const aboutPage = await AboutPage.findOne();
+    const aboutPage = await dbOptimizer.findOne(AboutPage, {}, {
+      lean: false, // We need the Mongoose document to call save()
+      context: { operation: `update_${itemName.toLowerCase().replace(' ', '_')}` }
+    });
     if (!aboutPage) {
       return res.status(404).json({ message: 'About Page not found' });
     }
@@ -153,7 +184,9 @@ const updateItem = (itemName, sectionName) => async (req, res) => {
       };
     }
 
-    await aboutPage.save();
+    await dbOptimizer.save(aboutPage, {
+      context: { operation: `save_updated_${itemName.toLowerCase().replace(' ', '_')}` }
+    });
     res.status(200).json(item);
   } catch (error) {
     console.error(`Error updating ${itemName}:`, error);
@@ -165,7 +198,10 @@ const deleteItem = (itemName, sectionName) => async (req, res) => {
   const { id } = req.params;
 
   try {
-    const aboutPage = await AboutPage.findOne();
+    const aboutPage = await dbOptimizer.findOne(AboutPage, {}, {
+      lean: false, // We need the Mongoose document to call save()
+      context: { operation: `delete_${itemName.toLowerCase().replace(' ', '_')}` }
+    });
     if (!aboutPage) {
       return res.status(404).json({ message: 'About Page not found' });
     }
@@ -180,7 +216,9 @@ const deleteItem = (itemName, sectionName) => async (req, res) => {
     }
 
     aboutPage[sectionName].pull(id);
-    await aboutPage.save();
+    await dbOptimizer.save(aboutPage, {
+      context: { operation: `save_deleted_${itemName.toLowerCase().replace(' ', '_')}` }
+    });
     res.status(200).json({ message: `${itemName} deleted successfully` });
   } catch (error) {
     console.error(`Error deleting ${itemName}:`, error);

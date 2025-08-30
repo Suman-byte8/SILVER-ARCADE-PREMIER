@@ -23,10 +23,57 @@ const uploadToCloudinary = (fileBuffer) => {
   });
 };
 
+// --- Bulk Operations Helper ---
+const bulkCreateFacilities = async (facilitiesData) => {
+  try {
+    const operations = facilitiesData.map(facility => ({
+      insertOne: {
+        document: facility
+      }
+    }));
+    
+    const result = await Facility.bulkWrite(operations, { ordered: false });
+    return result;
+  } catch (error) {
+    console.error('Bulk create error:', error);
+    throw error;
+  }
+};
+
+const bulkUpdateFacilities = async (updateOperations) => {
+  try {
+    const result = await Facility.bulkWrite(updateOperations, { ordered: false });
+    return result;
+  } catch (error) {
+    console.error('Bulk update error:', error);
+    throw error;
+  }
+};
+
+const bulkDeleteFacilities = async (facilityIds) => {
+  try {
+    const operations = facilityIds.map(id => ({
+      deleteOne: {
+        filter: { _id: id }
+      }
+    }));
+    
+    const result = await Facility.bulkWrite(operations, { ordered: false });
+    return result;
+  } catch (error) {
+    console.error('Bulk delete error:', error);
+    throw error;
+  }
+};
+
 // Get all facilities
 async function getFacilities(req, res) {
   try {
-    const facilities = await Facility.find().sort({ order: 1 });
+    const facilities = await Facility.find({ isActive: true })
+      .select('title subtitle description image path order createdAt') // Include description field
+      .sort({ order: 1 })
+      .lean(); // Returns plain JS objects (faster)
+    
     res.status(200).json({
       success: true,
       facilities
@@ -167,5 +214,8 @@ module.exports = {
   getFacilityById,
   createFacility,
   updateFacility,
-  deleteFacility
+  deleteFacility,
+  bulkCreateFacilities,
+  bulkUpdateFacilities,
+  bulkDeleteFacilities
 };

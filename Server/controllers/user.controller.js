@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const { generateToken } = require('../middlewares/authMiddleware');
 const userActivity = require('../schema/userActivity');
+const dbOptimizer = require('../utilities/dbOptimizer');
 
 // Register a new user
 async function registerUser(req, res) {
@@ -15,8 +16,10 @@ async function registerUser(req, res) {
     const { firstName, lastName, username, memberShipType, memberShipStartDate, memberShipEndDate, phoneNumber, whatsAppNumber, email, address, alternateNumber, password } = req.body;
 
     try {
-        // Check if user already exists
-        let user = await User.findOne({ email });
+        // Check if user already exists (optimized with monitoring)
+        let user = await dbOptimizer.findOne(User, { email }, {
+            context: { operation: 'user_registration_check' }
+        });
         if (user) {
             return res.status(400).json({ message: 'User already exists' });
         }
@@ -70,7 +73,7 @@ async function registerUser(req, res) {
         });
 
         await userActivity.create({
-            userId: newUser._id,
+            userId: user._id,
             action: "signup",
             userAgent: req.headers["user-agent"],
             ipAddress: req.ip,
@@ -87,8 +90,10 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
     const { email, password } = req.body;
     try {
-        // Check if user exists
-        let user = await User.findOne({ email });
+        // Check if user exists (optimized with monitoring)
+        let user = await dbOptimizer.findOne(User, { email }, {
+            context: { operation: 'user_login_check' }
+        });
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
@@ -129,7 +134,10 @@ async function loginUser(req, res) {
 // Get user profile
 async function getUserProfile(req, res) {
     try {
-        const user = await User.findById(req.user.id).select('-password');
+        const user = await dbOptimizer.findById(User, req.user.id, {
+            select: '-password',
+            context: { operation: 'get_user_profile' }
+        });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }   

@@ -19,7 +19,7 @@ const validateFacility = [
 ];
 
 // Get all facilities (public)
-router.get('/get-facilities',protect, getFacilities);
+router.get('/get-facilities', protect, getFacilities);
 
 // Get facility by ID (public)
 router.get('/get-facility/:id',protect, getFacilityById);

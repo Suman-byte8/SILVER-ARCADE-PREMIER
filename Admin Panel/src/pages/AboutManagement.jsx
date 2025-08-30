@@ -34,10 +34,7 @@ const AboutManagement = () => {
     fetchAboutData(); // Refresh data after adding content
   };
 
-  const handlePublish = () => {
-    setMessage("All changes published successfully!");
-    setTimeout(() => setMessage(""), 3000);
-  };
+
 
   const handleAmenityDelete = (amenityId) => {
     setAboutData(prevData => ({
@@ -116,12 +113,12 @@ const AboutManagement = () => {
     <div className="max-w-[1200px] mx-auto min-h-screen p-6 bg-gray-50">
       <header className="flex justify-between items-center mb-8 bg-white p-6 rounded-lg shadow">
         <h1 className="text-3xl font-bold text-gray-800">Admin Panel - Website Content</h1>
-        <button 
+        {/* <button 
           onClick={handlePublish}
           className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition duration-300 font-medium"
         >
           Publish Changes
-        </button>
+        </button> */}
       </header>
 
       {message && (
